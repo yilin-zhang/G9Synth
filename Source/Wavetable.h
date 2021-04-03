@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    Wavetable.h
+    WaveTable.h
     Created: 28 Mar 2021 10:30:40am
     Author:  Yilin Zhang
 
@@ -11,56 +11,52 @@
 #pragma once
 
 #include<JuceHeader.h>
-
+#include<juce_dsp/maths/juce_Phase.h>
 // https://docs.juce.com/master/tutorial_wavetable_synth.html
 
-class Wavetable
+class WaveTable
 {
 public:
-    Wavetable();
-    ~Wavetable();
-
-    /**
-     * Sets the frequency of the wavetable in Hz
-     */
-    void setFrequency(float freqInHz, int sampleRate);
-
-    /**
-     * Returns the frequency in Hz
-     * @return
-     */
-    float getFrequency();
-
-    /**
-     * Resets the read pointer
-     */
-    void reset();
-
-    /**
-     * Returns the next sample
-     * @return
-     */
-    virtual float getNextSample() = 0;
-
-    /**
-     * Fills the audio block
-     */
-    void getNextAudioBlock (const juce::AudioSourceChannelInfo& bufferToFill);
-
+    WaveTable();
+    virtual ~WaveTable() = default;
+    virtual void initialize(int tableSize);
+    float getSample(float phase) const;
+    float getSample(const juce::dsp::Phase<float>& phase) const;
+    const float* getTablePointer() const;
+    int getSize() const;
 protected:
-    float freqInHz;
-    int sampleRate;
+    bool isInitialized;
+    juce::AudioBuffer<float> table;
 };
 
-// Implement a wavetable buffer inside those classes
-class SinWavetable : Wavetable
+class SinWaveTable : public WaveTable
 {
+public:
+    SinWaveTable() = default;
+    ~SinWaveTable() override = default;
+    void initialize(int tableSize) override;
 };
 
-class SqrWavetable : Wavetable
+class SawWaveTable : public WaveTable
 {
+public:
+    SawWaveTable() = default;
+    ~SawWaveTable() override = default;
+    void initialize(int tableSize) override;
 };
 
-class SawWavetable : Wavetable
+class SqrWaveTable : public WaveTable
 {
+public:
+    SqrWaveTable() = default;
+    ~SqrWaveTable() override = default;
+    void initialize(int tableSize) override;
+};
+
+class EditableWaveTable : public WaveTable
+{
+public:
+    EditableWaveTable() = default;
+    ~EditableWaveTable() override = default;
+    void editTable(int startSample, const float* source, int numSamples);
 };

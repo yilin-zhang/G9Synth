@@ -9,11 +9,13 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "Oscillator.h"
 
 //==============================================================================
 /**
 */
-class G9SynthAudioProcessor  : public juce::AudioProcessor
+class G9SynthAudioProcessor  : public juce::AudioProcessor,
+                               public juce::AudioProcessorValueTreeState::Listener
 {
 public:
     //==============================================================================
@@ -53,7 +55,16 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    //==============================================================================
+    void parameterChanged (const juce::String &parameterID, float newValue) override;
+
 private:
+    juce::AudioProcessorValueTreeState parameters;
+    SinWaveTable sinWaveTable;
+    WaveTableOscillator sinOscillator;
+    juce::ADSR adsr;
+    int currentMIDINote;
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (G9SynthAudioProcessor)
 };

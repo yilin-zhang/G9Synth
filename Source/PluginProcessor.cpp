@@ -19,9 +19,22 @@ G9SynthAudioProcessor::G9SynthAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
 #endif
+       parameters(*this, nullptr, juce::Identifier("G9Synth"),
+                  {
+                       std::make_unique<juce::AudioParameterFloat>("SinOsc#shiftInCent", "SinOsc#PitchShift", -100.0f, 100.0f, 0.0f),
+                       std::make_unique<juce::AudioParameterFloat>("ADSR#attack", "ADSR#Attack", 0.0f, 10.0f, 0.1f),
+                       std::make_unique<juce::AudioParameterFloat>("ADSR#decay", "ADSR#Decay", 0.0f, 10.0f, 0.1f),
+                       std::make_unique<juce::AudioParameterFloat>("ADSR#sustain", "ADSR#Sustain", 0.0f, 1.0f, 1.0f),
+                       std::make_unique<juce::AudioParameterFloat>("ADSR#release", "ADSR#Release", 0.0f, 10.0f, 0.1f),
+                  })
 {
+    parameters.addParameterListener("SinOsc#shiftInCent", this);
+    parameters.addParameterListener("ADSR#attack", this);
+    parameters.addParameterListener("ADSR#decay", this);
+    parameters.addParameterListener("ADSR#sustain", this);
+    parameters.addParameterListener("ADSR#release", this);
 }
 
 G9SynthAudioProcessor::~G9SynthAudioProcessor()
@@ -95,12 +108,23 @@ void G9SynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+    sinWaveTable.initialize(4096); // the wave-table only initializes itself once
+    sinOscillator.initialize(&sinWaveTable,0.f, sampleRate);
+    adsr.setSampleRate(sampleRate);
+    adsr.setParameters({
+                    parameters.getParameter("ADSR#attack")->getValue(),
+                    parameters.getParameter("ADSR#decay")->getValue(),
+                    parameters.getParameter("ADSR#sustain")->getValue(),
+                    parameters.getParameter("ADSR#release")->getValue(),
+            });
 }
 
 void G9SynthAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
+    sinOscillator.reset();
+    adsr.reset();
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -134,7 +158,8 @@ void G9SynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
-
+    auto blockSize = buffer.getNumSamples();
+    auto numChannels = buffer.getNumChannels();
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
     // guaranteed to be empty - they may contain garbage).
@@ -144,18 +169,33 @@ void G9SynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
+    // parse the midi messages
+    for (auto msg : midiMessages)
     {
-        auto* channelData = buffer.getWritePointer (channel);
-
-        // ..do something to the data...
+        if (msg.getMessage().isNoteOn())
+        {
+            adsr.noteOn();
+            currentMIDINote = msg.getMessage().getNoteNumber();
+            sinOscillator.setFrequency(juce::MidiMessage::getMidiNoteInHertz(currentMIDINote));
+        }
+        else if (msg.getMessage().isNoteOff())
+        {
+            if (msg.getMessage().getNoteNumber() == currentMIDINote)
+                adsr.noteOff();
+        }
     }
+
+    // generate sin wave
+    auto pp = buffer.getArrayOfWritePointers();
+    for (auto i = 0; i < blockSize; ++i)
+    {
+        auto val = sinOscillator.getNextSample();
+        for (auto c = 0; c < numChannels; ++c)
+            pp[c][i] = val;
+    }
+
+    // ADSR
+    adsr.applyEnvelopeToBuffer(buffer, 0, blockSize);
 }
 
 //==============================================================================
@@ -175,12 +215,54 @@ void G9SynthAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
+    auto state = parameters.copyState();
+    std::unique_ptr<juce::XmlElement> xml (state.createXml());
+    copyXmlToBinary (*xml, destData);
 }
 
 void G9SynthAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+    std::unique_ptr<juce::XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
+
+    if (xmlState.get() != nullptr)
+        if (xmlState->hasTagName (parameters.state.getType()))
+            parameters.replaceState (juce::ValueTree::fromXml (*xmlState));
+}
+
+void G9SynthAudioProcessor::parameterChanged (const juce::String &parameterID, float newValue)
+{
+    // Sin oscillator
+    if (parameterID == "SinOsc#shiftInCent")
+    {
+        sinOscillator.shiftPitch(newValue);
+    }
+    // ADSR
+    else if (parameterID == "ADSR#attack")
+    {
+        juce::ADSR::Parameters adsrParams = adsr.getParameters();
+        adsrParams.attack = newValue;
+        adsr.setParameters(adsrParams);
+    }
+    else if (parameterID == "ADSR#decay")
+    {
+        juce::ADSR::Parameters adsrParams = adsr.getParameters();
+        adsrParams.decay = newValue;
+        adsr.setParameters(adsrParams);
+    }
+    else if (parameterID == "ADSR#sustain")
+    {
+        juce::ADSR::Parameters adsrParams = adsr.getParameters();
+        adsrParams.sustain = newValue;
+        adsr.setParameters(adsrParams);
+    }
+    else if (parameterID == "ADSR#release")
+    {
+        juce::ADSR::Parameters adsrParams = adsr.getParameters();
+        adsrParams.release = newValue;
+        adsr.setParameters(adsrParams);
+    }
 }
 
 //==============================================================================

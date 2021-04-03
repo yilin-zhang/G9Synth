@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="ksYxo6" name="G9Synth" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
+              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
+              pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn">
   <MAINGROUP id="yvM98K" name="G9Synth">
     <GROUP id="{1CFBD44A-1F54-A445-141B-951F1D8E43F4}" name="Source">
       <GROUP id="{D24F9C64-0E56-B526-6114-55B05A8258DF}" name="Utils">
@@ -9,8 +10,8 @@
         <FILE id="xI0hII" name="Oscillator.h" compile="0" resource="0" file="Source/Oscillator.h"/>
         <FILE id="uOjfJV" name="Vibrato.cpp" compile="1" resource="0" file="Source/Vibrato.cpp"/>
         <FILE id="dyvrZV" name="Vibrato.h" compile="0" resource="0" file="Source/Vibrato.h"/>
-        <FILE id="pbSl6L" name="Wavetable.cpp" compile="1" resource="0" file="Source/Wavetable.cpp"/>
-        <FILE id="JjSdK8" name="Wavetable.h" compile="0" resource="0" file="Source/Wavetable.h"/>
+        <FILE id="pbSl6L" name="WaveTable.cpp" compile="1" resource="0" file="Source/WaveTable.cpp"/>
+        <FILE id="JjSdK8" name="WaveTable.h" compile="0" resource="0" file="Source/WaveTable.h"/>
       </GROUP>
       <FILE id="ey1vmR" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
