@@ -77,9 +77,16 @@ public:
      */
     void shiftPitch(float cents);
 
+    /**
+     * Returns the pitch shift in cents
+     * @return
+     */
+    float getPitchShift() const;
+
 private:
     const WaveTable *table;
     float freqInHz;
+    float shiftInCent;
     int sampleRate;
     juce::dsp::Phase<float> phase;
 };

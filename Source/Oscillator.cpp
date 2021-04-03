@@ -10,7 +10,7 @@
 
 #include "Oscillator.h"
 
-WaveTableOscillator::WaveTableOscillator(): table(nullptr), freqInHz(0.f), sampleRate(0) {}
+WaveTableOscillator::WaveTableOscillator(): table(nullptr), freqInHz(0.f), shiftInCent(0.f), sampleRate(0) {}
 
 void WaveTableOscillator::initialize(const WaveTable *waveTable, float freqInHz, int sampleRate)
 {
@@ -29,6 +29,7 @@ void WaveTableOscillator::reset()
 {
     table = nullptr;
     freqInHz = 0.f;
+    shiftInCent = 0.f;
     sampleRate = 0;
     phase.reset();
 }
@@ -40,8 +41,14 @@ float WaveTableOscillator::getNextSample()
 
     // get a sample
     auto sample = table->getSample(phase);
+    float freq = 0.f;
+    if (freqInHz > 8.f)
+    {
+        float note = log(freqInHz/440.0)/log(2) * 12 + 69 + shiftInCent/100;
+        freq = 440.f * pow(2.0, (note - 69)/12);
+    }
     // advance the phase
-    phase.advance(freqInHz / static_cast<float>(sampleRate) * 2 * juce::float_Pi);
+    phase.advance(freq / static_cast<float>(sampleRate) * 2 * juce::float_Pi);
 
     return sample;
 }
@@ -72,5 +79,10 @@ float WaveTableOscillator::getFrequency() const
 
 void WaveTableOscillator::shiftPitch(float cents)
 {
-    // TODO
+    shiftInCent = cents;
+}
+
+float WaveTableOscillator::getPitchShift() const
+{
+    return shiftInCent;
 }
