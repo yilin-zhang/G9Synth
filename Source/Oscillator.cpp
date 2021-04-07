@@ -12,7 +12,7 @@
 
 WaveTableOscillator::WaveTableOscillator(): table(nullptr), freqInHz(0.f), shiftInCent(0.f), sampleRate(0) {}
 
-void WaveTableOscillator::initialize(const WaveTable *waveTable, float freqInHz, int sampleRate)
+void WaveTableOscillator::initialize(const WaveTable *waveTable, float freqInHz, double sampleRate)
 {
     table = waveTable;
     this->freqInHz = freqInHz;

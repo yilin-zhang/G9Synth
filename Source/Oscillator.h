@@ -29,7 +29,7 @@ public:
      * @param freqInHz
      * @param sampleRate
      */
-    void initialize(const WaveTable *waveTable, float freqInHz, int sampleRate);
+    void initialize(const WaveTable *waveTable, float freqInHz, double sampleRate);
 
     /**
      * Resets the phase to 0
@@ -87,6 +87,6 @@ private:
     const WaveTable *table;
     float freqInHz;
     float shiftInCent;
-    int sampleRate;
+    double sampleRate;
     juce::dsp::Phase<float> phase;
 };
