@@ -11,7 +11,6 @@
 #pragma once
 
 #include<JuceHeader.h>
-#include<juce_dsp/maths/juce_Phase.h>
 // https://docs.juce.com/master/tutorial_wavetable_synth.html
 
 class WaveTable

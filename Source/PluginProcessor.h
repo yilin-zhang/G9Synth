@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "Oscillator.h"
+#include "Delay.h"
 
 //==============================================================================
 /**
@@ -63,6 +64,8 @@ private:
     SinWaveTable sinWaveTable;
     WaveTableOscillator sinOscillator;
     juce::ADSR adsr;
+    Delay delay;
+
     int currentMIDINote;
 
     //==============================================================================

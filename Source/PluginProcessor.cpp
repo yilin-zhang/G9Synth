@@ -28,6 +28,9 @@ G9SynthAudioProcessor::G9SynthAudioProcessor()
                        std::make_unique<juce::AudioParameterFloat>("ADSR#decay", "ADSR#Decay", 0.0f, 10.0f, 0.1f),
                        std::make_unique<juce::AudioParameterFloat>("ADSR#sustain", "ADSR#Sustain", 0.0f, 1.0f, 1.0f),
                        std::make_unique<juce::AudioParameterFloat>("ADSR#release", "ADSR#Release", 0.0f, 10.0f, 0.1f),
+                       std::make_unique<juce::AudioParameterFloat>("Delay#time", "Delay#Time", 0.0f, 10.0f, 0.5f),
+                       std::make_unique<juce::AudioParameterFloat>("Delay#feedback", "Delay#Feedback", 0.0f, 1.0f, 0.5f),
+                       std::make_unique<juce::AudioParameterFloat>("Delay#mix", "Delay#Mix", 0.0f, 1.0f, 0.5f),
                   })
 {
     parameters.addParameterListener("SinOsc#shiftInCent", this);
@@ -35,6 +38,9 @@ G9SynthAudioProcessor::G9SynthAudioProcessor()
     parameters.addParameterListener("ADSR#decay", this);
     parameters.addParameterListener("ADSR#sustain", this);
     parameters.addParameterListener("ADSR#release", this);
+    parameters.addParameterListener("Delay#time", this);
+    parameters.addParameterListener("Delay#feedback", this);
+    parameters.addParameterListener("Delay#mix", this);
 }
 
 G9SynthAudioProcessor::~G9SynthAudioProcessor()
@@ -117,6 +123,10 @@ void G9SynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
                     parameters.getParameter("ADSR#sustain")->getValue(),
                     parameters.getParameter("ADSR#release")->getValue(),
             });
+    delay.initialize({sampleRate, static_cast<juce::uint32>(samplesPerBlock), 2}, 10);
+    delay.setDelayTime(parameters.getParameter("Delay#time")->getValue());
+    delay.setFeedback(parameters.getParameter("Delay#feedback")->getValue());
+    delay.setMix(parameters.getParameter("Delay#mix")->getValue());
 }
 
 void G9SynthAudioProcessor::releaseResources()
@@ -125,6 +135,7 @@ void G9SynthAudioProcessor::releaseResources()
     // spare memory, etc.
     sinOscillator.reset();
     adsr.reset();
+    delay.reset();
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -196,6 +207,8 @@ void G9SynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
 
     // ADSR
     adsr.applyEnvelopeToBuffer(buffer, 0, blockSize);
+
+    delay.process(buffer);
 }
 
 //==============================================================================
@@ -262,6 +275,19 @@ void G9SynthAudioProcessor::parameterChanged (const juce::String &parameterID, f
         juce::ADSR::Parameters adsrParams = adsr.getParameters();
         adsrParams.release = newValue;
         adsr.setParameters(adsrParams);
+    }
+
+    else if (parameterID == "Delay#time")
+    {
+        delay.setDelayTime(newValue);
+    }
+    else if (parameterID == "Delay#feedback")
+    {
+        delay.setFeedback(newValue);
+    }
+    else if (parameterID == "Delay#mix")
+    {
+        delay.setMix(newValue);
     }
 }
 
