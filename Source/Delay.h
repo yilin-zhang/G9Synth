@@ -69,5 +69,6 @@ private:
     } delaySpec;
 
     float maximumDelayInS;
-    juce::dsp::DelayLine<float>** ppDelayLine{};
+
+    juce::dsp::DelayLine<float>* pDelayLine;
 };

@@ -27,12 +27,9 @@ bool Delay::initialize(const juce::dsp::ProcessSpec& spec, float maximumDelayInS
 
     // allocate memory
     int maximumDelayInSamples = ceil(spec.sampleRate * maximumDelayInS);
-    ppDelayLine = new juce::dsp::DelayLine<float>*[spec.numChannels];
-    for (int c=0; c<spec.numChannels; ++c)
-    {
-        ppDelayLine[c] = new juce::dsp::DelayLine<float>(maximumDelayInSamples);
-        ppDelayLine[c]->prepare({spec.sampleRate, spec.maximumBlockSize, static_cast<juce::uint32>(spec.numChannels)});
-    }
+
+    pDelayLine = new juce::dsp::DelayLine<float>(maximumDelayInSamples);
+    pDelayLine->prepare(spec);
 
     processSpec = spec;
     this->maximumDelayInS = maximumDelayInS;
@@ -44,8 +41,7 @@ bool Delay::initialize(const juce::dsp::ProcessSpec& spec, float maximumDelayInS
 void Delay::clear()
 {
     // clear the delay lines
-    for (int c=0; c<processSpec.numChannels; ++c)
-        ppDelayLine[c]->reset();
+    pDelayLine->reset();
 }
 
 void Delay::reset()
@@ -56,9 +52,7 @@ void Delay::reset()
     clear();
 
     // release memory
-    for (int c=0; c<processSpec.numChannels; ++c)
-        delete ppDelayLine[c];
-    delete[] ppDelayLine;
+    delete pDelayLine;
 
     processSpec.numChannels = 0;
     processSpec.sampleRate = 0.0;
@@ -81,10 +75,10 @@ void Delay::process(juce::AudioBuffer<float> &buffer)
     {
         for (int c=0; c<numChannels; ++c)
         {
-            auto sampleInLine = ppDelayLine[c]->popSample(0);
+            auto sampleInLine = pDelayLine->popSample(c);
             auto dry = ppBuffer[c][i];
             auto wet = ppBuffer[c][i] + sampleInLine * delaySpec.feedback;
-            ppDelayLine[c]->pushSample(0, wet);
+            pDelayLine->pushSample(c, wet);
             ppBuffer[c][i] = wet * delaySpec.mix + dry * (1 - delaySpec.mix);
         }
     }
@@ -118,7 +112,6 @@ void Delay::setDelayTime(float value)
         return;
 
     delaySpec.delayInS = value;
-    for (int c=0; c<processSpec.numChannels; ++c)
-        ppDelayLine[c]->setDelay(value * processSpec.sampleRate);
+    pDelayLine->setDelay(value * processSpec.sampleRate);
 }
 
