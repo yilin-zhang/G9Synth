@@ -15,18 +15,29 @@
 class Vibrato
 {
 public:
-    Vibrato(int maximumDelayInSamples);
+    Vibrato();
     ~Vibrato();
 
     /**
      * Initialises the processor.
      */
-    void prepare(const juce::dsp::ProcessSpec& spec);
+    bool initialize(const juce::dsp::ProcessSpec& spec, int maximumDepthInSamples);
+
+    /**
+     * Processes the audio buffer
+     * @param buffer
+     */
+    void process(juce::AudioBuffer<float> &buffer);
 
     /**
      * Resets the internal state variables of the processor.
      */
     void reset();
+
+    /**
+     * Releases the memory
+     */
+    void clear();
 
     /**
      * Sets the vibrato depth in samples
@@ -51,4 +62,25 @@ public:
      * @return
      */
     float getFrequency();
+
+    /**
+     * Sets the FX mix
+     * @param value
+     */
+    void setMix(float value);
+
+    /**
+     * Returns the FX mix
+     * @param value
+     */
+    float getMix();
+
+private:
+    bool isInitialized;
+    int maximumDepthInSamples;
+
+    struct VibratoSpec
+    {
+        int depthInSamples; float freqInHz; float mix;
+    } vibratoSpec;
 };
