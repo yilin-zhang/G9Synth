@@ -30,12 +30,12 @@ public:
     void process(juce::AudioBuffer<float> &buffer);
 
     /**
-     * Resets the internal state variables of the processor.
+     * Releases the memory and sets the object uninitialized
      */
     void reset();
 
     /**
-     * Releases the memory
+     * Clears the delay line and resets the internal state variables of the processor.
      */
     void clear();
 

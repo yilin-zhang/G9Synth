@@ -32,7 +32,7 @@ public:
     void clear();
 
     /**
-     * Releases the memories and sets the object uninitialized
+     * Releases the memory and sets the object uninitialized
      */
     void reset();
 

@@ -17,7 +17,7 @@ Vibrato::Vibrato():isInitialized(false)
 
 Vibrato::~Vibrato()
 {
-    clear();
+    reset();
 }
 
 bool Vibrato::initialize(const juce::dsp::ProcessSpec &spec, int maximumDepthInSamples)
@@ -46,15 +46,21 @@ void Vibrato::reset()
     if (!isInitialized)
         return;
 
-    // 1. clear the delay line
+    clear();
 
-    // 2. reset the LFO
+    // release the memory
 
+    isInitialized = false;
 }
 
 void Vibrato::clear()
 {
-    isInitialized = false;
+    if (!isInitialized)
+        return;
+
+    // 1. clear the delay line
+
+    // 2. reset the LFO
 }
 
 void Vibrato::setDepth(int depthInSamples)

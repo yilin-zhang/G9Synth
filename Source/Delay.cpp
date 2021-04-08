@@ -17,7 +17,7 @@ isInitialized(false), processSpec({0, 0, 0}), delaySpec({0.f, 0.f, 0.f})
 
 Delay::~Delay()
 {
-    clear();
+    reset();
 }
 
 bool Delay::initialize(const juce::dsp::ProcessSpec& spec, float maximumDelayInS)

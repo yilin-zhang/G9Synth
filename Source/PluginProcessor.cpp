@@ -208,6 +208,7 @@ void G9SynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     // ADSR
     adsr.applyEnvelopeToBuffer(buffer, 0, blockSize);
 
+    // Delay
     delay.process(buffer);
 }
 
@@ -276,7 +277,7 @@ void G9SynthAudioProcessor::parameterChanged (const juce::String &parameterID, f
         adsrParams.release = newValue;
         adsr.setParameters(adsrParams);
     }
-
+    // Delay
     else if (parameterID == "Delay#time")
     {
         delay.setDelayTime(newValue);
