@@ -118,15 +118,15 @@ void G9SynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     sinOscillator.initialize(&sinWaveTable,0.f, sampleRate);
     adsr.setSampleRate(sampleRate);
     adsr.setParameters({
-                    parameters.getParameter("ADSR#attack")->getValue(),
-                    parameters.getParameter("ADSR#decay")->getValue(),
-                    parameters.getParameter("ADSR#sustain")->getValue(),
-                    parameters.getParameter("ADSR#release")->getValue(),
+                    parameters.getParameterAsValue("ADSR#attack").getValue(),
+                    parameters.getParameterAsValue("ADSR#decay").getValue(),
+                    parameters.getParameterAsValue("ADSR#sustain").getValue(),
+                    parameters.getParameterAsValue("ADSR#release").getValue(),
             });
     delay.initialize({sampleRate, static_cast<juce::uint32>(samplesPerBlock), 2}, 10);
-    delay.setDelayTime(parameters.getParameter("Delay#time")->getValue());
-    delay.setFeedback(parameters.getParameter("Delay#feedback")->getValue());
-    delay.setMix(parameters.getParameter("Delay#mix")->getValue());
+    delay.setDelayTime(parameters.getParameterAsValue("Delay#time").getValue());
+    delay.setFeedback(parameters.getParameterAsValue("Delay#feedback").getValue());
+    delay.setMix(parameters.getParameterAsValue("Delay#mix").getValue());
 }
 
 void G9SynthAudioProcessor::releaseResources()
