@@ -28,6 +28,9 @@ G9SynthAudioProcessor::G9SynthAudioProcessor()
                        std::make_unique<juce::AudioParameterFloat>("ADSR#decay", "ADSR#Decay", 0.0f, 10.0f, 0.1f),
                        std::make_unique<juce::AudioParameterFloat>("ADSR#sustain", "ADSR#Sustain", 0.0f, 1.0f, 1.0f),
                        std::make_unique<juce::AudioParameterFloat>("ADSR#release", "ADSR#Release", 0.0f, 10.0f, 0.1f),
+                       std::make_unique<juce::AudioParameterFloat>("Vibrato#depth", "Vibrato#Depth", 0.0f, 0.2f, 0.1f),
+                       std::make_unique<juce::AudioParameterFloat>("Vibrato#freq", "Vibrato#Freq", 0.0f, 10.0f, 5.f),
+                       std::make_unique<juce::AudioParameterFloat>("Vibrato#mix", "Vibrato#Mix", 0.0f, 1.0f, 1.0f),
                        std::make_unique<juce::AudioParameterFloat>("Delay#time", "Delay#Time", 0.0f, 10.0f, 0.5f),
                        std::make_unique<juce::AudioParameterFloat>("Delay#feedback", "Delay#Feedback", 0.0f, 1.0f, 0.5f),
                        std::make_unique<juce::AudioParameterFloat>("Delay#mix", "Delay#Mix", 0.0f, 1.0f, 0.5f),
@@ -38,6 +41,9 @@ G9SynthAudioProcessor::G9SynthAudioProcessor()
     parameters.addParameterListener("ADSR#decay", this);
     parameters.addParameterListener("ADSR#sustain", this);
     parameters.addParameterListener("ADSR#release", this);
+    parameters.addParameterListener("Vibrato#depth", this);
+    parameters.addParameterListener("Vibrato#freq", this);
+    parameters.addParameterListener("Vibrato#mix", this);
     parameters.addParameterListener("Delay#time", this);
     parameters.addParameterListener("Delay#feedback", this);
     parameters.addParameterListener("Delay#mix", this);
@@ -116,6 +122,9 @@ void G9SynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     // initialisation that you need..
     sinWaveTable.initialize(4096); // the wave-table only initializes itself once
     sinOscillator.initialize(&sinWaveTable,0.f, sampleRate);
+
+    svf.prepare({sampleRate, static_cast<juce::uint32>(samplesPerBlock), 2});
+
     adsr.setSampleRate(sampleRate);
     adsr.setParameters({
                     parameters.getParameterAsValue("ADSR#attack").getValue(),
@@ -123,6 +132,12 @@ void G9SynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
                     parameters.getParameterAsValue("ADSR#sustain").getValue(),
                     parameters.getParameterAsValue("ADSR#release").getValue(),
             });
+
+    vibrato.initialize({sampleRate, static_cast<juce::uint32>(samplesPerBlock), 2}, 0.2);
+    vibrato.setDepth(parameters.getParameterAsValue("Vibrato#depth").getValue());
+    vibrato.setFrequency(parameters.getParameterAsValue("Vibrato#freq").getValue());
+    vibrato.setMix(parameters.getParameterAsValue("Vibrato#mix").getValue());
+
     delay.initialize({sampleRate, static_cast<juce::uint32>(samplesPerBlock), 2}, 10);
     delay.setDelayTime(parameters.getParameterAsValue("Delay#time").getValue());
     delay.setFeedback(parameters.getParameterAsValue("Delay#feedback").getValue());
@@ -134,6 +149,8 @@ void G9SynthAudioProcessor::releaseResources()
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
     sinOscillator.reset();
+    vibrato.reset();
+    svf.reset();
     adsr.reset();
     delay.reset();
 }
@@ -208,6 +225,9 @@ void G9SynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     // ADSR
     adsr.applyEnvelopeToBuffer(buffer, 0, blockSize);
 
+    // vibrato
+    vibrato.process(buffer);
+
     // Delay
     delay.process(buffer);
 }
@@ -276,6 +296,19 @@ void G9SynthAudioProcessor::parameterChanged (const juce::String &parameterID, f
         juce::ADSR::Parameters adsrParams = adsr.getParameters();
         adsrParams.release = newValue;
         adsr.setParameters(adsrParams);
+    }
+    // Vibrato
+    else if (parameterID == "Vibrato#depth")
+    {
+        vibrato.setDepth(newValue);
+    }
+    else if (parameterID == "Vibrato#freq")
+    {
+        vibrato.setFrequency(newValue);
+    }
+    else if (parameterID == "Vibrato#mix")
+    {
+        vibrato.setMix(newValue);
     }
     // Delay
     else if (parameterID == "Delay#time")

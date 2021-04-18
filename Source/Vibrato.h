@@ -11,6 +11,8 @@
 #pragma once
 
 #include<JuceHeader.h>
+#include "Oscillator.h"
+#include "RingBuffer.h"
 
 class Vibrato
 {
@@ -21,7 +23,7 @@ public:
     /**
      * Initialises the processor.
      */
-    bool initialize(const juce::dsp::ProcessSpec& spec, int maximumDepthInSamples);
+    bool initialize(const juce::dsp::ProcessSpec& spec, float maximumDepthInS);
 
     /**
      * Processes the audio buffer
@@ -43,13 +45,13 @@ public:
      * Sets the vibrato depth in samples
      * @param depthInSamples
      */
-    void setDepth(int depthInSamples);
+    void setDepth(float depthInS);
 
     /**
-     * Returns the vibrato depth
+     * Returns the vibrato depth in samples
      * @return
      */
-    int getDepth();
+    float getDepth();
 
     /**
      * Sets the vibrato frequency in Hz
@@ -77,10 +79,15 @@ public:
 
 private:
     bool isInitialized;
-    int maximumDepthInSamples;
-
+    float maximumDepthInS;
+    int numChannels;
+    double sampleRate;
+    WaveTableOscillator lfo;
+    SinWaveTable sinWaveTable;
+    CRingBuffer<float> **ppRingBuffer;
+    
     struct VibratoSpec
     {
-        int depthInSamples; float freqInHz; float mix;
+        float depthInSamples; float freqInHz; float mix;
     } vibratoSpec;
 };

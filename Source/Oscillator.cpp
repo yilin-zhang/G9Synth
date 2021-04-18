@@ -42,7 +42,7 @@ float WaveTableOscillator::getNextSample()
     // get a sample
     auto sample = table->getSample(phase);
     float freq = 0.f;
-    if (freqInHz > 8.f)
+    if (freqInHz > 0.f)
     {
         float note = log(freqInHz/440.0)/log(2) * 12 + 69 + shiftInCent/100;
         freq = 440.f * pow(2.0, (note - 69)/12);

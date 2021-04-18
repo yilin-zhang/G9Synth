@@ -11,6 +11,7 @@
 #include <JuceHeader.h>
 #include "Oscillator.h"
 #include "Delay.h"
+#include "Vibrato.h"
 
 //==============================================================================
 /**
@@ -63,6 +64,8 @@ private:
     juce::AudioProcessorValueTreeState parameters;
     SinWaveTable sinWaveTable;
     WaveTableOscillator sinOscillator;
+    Vibrato vibrato;
+    juce::dsp::StateVariableFilter::Filter<float> svf;
     juce::ADSR adsr;
     Delay delay;
 
