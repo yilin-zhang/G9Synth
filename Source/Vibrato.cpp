@@ -82,7 +82,7 @@ void Vibrato::reset()
 
     // release the memory
     for (int c=0; c<numChannels; ++c)
-        delete[] ppRingBuffer[c];
+        delete ppRingBuffer[c];
     delete ppRingBuffer;
 
     numChannels = 0;
