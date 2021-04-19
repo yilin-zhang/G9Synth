@@ -10,12 +10,14 @@
 
 #include "Oscillator.h"
 
-WaveTableOscillator::WaveTableOscillator(): table(nullptr), freqInHz(0.f), shiftInCent(0.f), sampleRate(0) {}
+WaveTableOscillator::WaveTableOscillator():
+table(nullptr), sampleRate(0),
+waveTableOscSpec({0.f, 1.f, 0.f}) {}
 
 void WaveTableOscillator::initialize(const WaveTable *waveTable, float freqInHz, double sampleRate)
 {
     table = waveTable;
-    this->freqInHz = freqInHz;
+    waveTableOscSpec.freqInHz = freqInHz;
     this->sampleRate = sampleRate;
     phase.reset();
 }
@@ -28,8 +30,9 @@ void WaveTableOscillator::resetWaveform()
 void WaveTableOscillator::reset()
 {
     table = nullptr;
-    freqInHz = 0.f;
-    shiftInCent = 0.f;
+    waveTableOscSpec.freqInHz = 0.f;
+    waveTableOscSpec.gain = 1.f;
+    waveTableOscSpec.shiftInCent = 0.f;
     sampleRate = 0;
     phase.reset();
 }
@@ -40,11 +43,11 @@ float WaveTableOscillator::getNextSample()
         return 0.f;
 
     // get a sample
-    auto sample = table->getSample(phase);
+    auto sample = table->getSample(phase) * waveTableOscSpec.gain;
     float freq = 0.f;
-    if (freqInHz > 0.f)
+    if (waveTableOscSpec.freqInHz > 0.f)
     {
-        float note = log(freqInHz/440.0)/log(2) * 12 + 69 + shiftInCent/100;
+        float note = log(waveTableOscSpec.freqInHz/440.0)/log(2) * 12 + 69 + waveTableOscSpec.shiftInCent/100;
         freq = 440.f * pow(2.0, (note - 69)/12);
     }
     // advance the phase
@@ -69,20 +72,30 @@ void WaveTableOscillator::getNextBlock(float *buffer, int numSamples)
 
 void WaveTableOscillator::setFrequency(float freqInHz)
 {
-    this->freqInHz = freqInHz;
+    waveTableOscSpec.freqInHz = freqInHz;
 }
 
 float WaveTableOscillator::getFrequency() const
 {
-    return freqInHz;
+    return waveTableOscSpec.freqInHz;
+}
+
+void WaveTableOscillator::setGain(float gain)
+{
+    waveTableOscSpec.gain = gain;
+}
+
+float WaveTableOscillator::getGain() const
+{
+    return waveTableOscSpec.gain;
 }
 
 void WaveTableOscillator::shiftPitch(float cents)
 {
-    shiftInCent = cents;
+    waveTableOscSpec.shiftInCent = cents;
 }
 
 float WaveTableOscillator::getPitchShift() const
 {
-    return shiftInCent;
+    return waveTableOscSpec.shiftInCent;
 }

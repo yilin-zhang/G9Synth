@@ -60,7 +60,7 @@ void Vibrato::process(juce::AudioBuffer<float> &buffer)
 
     for (int i=0; i<bufferSize; ++i)
     {
-        float fOffset = lfo.getNextSample() * vibratoSpec.depthInSamples;
+        float fOffset = lfo.getNextSample();
         for (int c=0; c<numChannels; ++c)
         {
             auto dry = ppBuffer[c][i];
@@ -68,10 +68,6 @@ void Vibrato::process(juce::AudioBuffer<float> &buffer)
             auto wet = ppRingBuffer[c]->get(fOffset);
             ppRingBuffer[c]->getPostInc(); // dummy call to keep write and read idx in sync
             ppBuffer[c][i] = wet * vibratoSpec.mix + dry * (1 - vibratoSpec.mix);
-
-//            ppRingBuffer[c]->putPostInc(ppBuffer[c][i]);
-//            ppBuffer[c][i] = ppRingBuffer[c]->get(fOffset);
-//            ppRingBuffer[c]->getPostInc(); // dummy call to keep write and read idx in sync
         }
     }
 
@@ -125,6 +121,7 @@ void Vibrato::setDepth(float depthInS)
 
     // 2. set the depth
     vibratoSpec.depthInSamples = static_cast<float>(depthInS * sampleRate);
+    lfo.setGain(vibratoSpec.depthInSamples);
 }
 
 void Vibrato::setFrequency(float freqInHz)

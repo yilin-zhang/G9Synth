@@ -61,7 +61,7 @@ int WaveTable::getSize() const
 }
 
 // ========================================
-// SinWaveTable
+// Special Wave-tables
 // ========================================
 
 void SinWaveTable::initialize(int tableSize)
@@ -75,13 +75,37 @@ void SinWaveTable::initialize(int tableSize)
 void SawWaveTable::initialize(int tableSize)
 {
     WaveTable::initialize(tableSize);
-    // TODO: fill the table
+    auto writePointer = table.getWritePointer(0);
+    int numRampUp = tableSize;
+    for (int i=0; i<tableSize; ++i)
+    {
+        writePointer[i] = 1.f / static_cast<float>(numRampUp) * static_cast<float>(i);
+        writePointer[i] = writePointer[i] * 2 - 1;
+    }
+}
+
+void TriWaveTable::initialize(int tableSize)
+{
+    WaveTable::initialize(tableSize);
+    auto writePointer = table.getWritePointer(0);
+    int numRampUp = tableSize / 2 + 1;
+    for (int i=0; i<tableSize; ++i)
+    {
+        writePointer[i] = i < numRampUp ? 1.f / static_cast<float>(numRampUp) * static_cast<float>(i) :
+                          2.f - 1.f / static_cast<float>(numRampUp) * static_cast<float>(i);
+        writePointer[i] = writePointer[i] * 2 - 1;
+    }
 }
 
 void SqrWaveTable::initialize(int tableSize)
 {
     WaveTable::initialize(tableSize);
-    // TODO: fill the table
+    auto writePointer = table.getWritePointer(0);
+    for (int i=0; i<tableSize; ++i)
+        if (i < tableSize / 2)
+            writePointer[i] = 0.f;
+        else
+            writePointer[i] = 1.f;
 }
 
 void EditableWaveTable::editTable(int startSample, const float* source, int numSamples)

@@ -72,6 +72,16 @@ public:
     float getFrequency() const;
 
     /**
+     * Sets the gain of the oscillator
+     */
+    void setGain(float gain);
+
+    /**
+     * Returns the gain of the oscillator
+     */
+    float getGain() const;
+
+    /**
      * Shifts the pitch in cents
      * @param cents
      */
@@ -85,8 +95,12 @@ public:
 
 private:
     const WaveTable *table;
-    float freqInHz;
-    float shiftInCent;
     double sampleRate;
     juce::dsp::Phase<float> phase;
+    struct WaveTableOscillatorSpec
+    {
+        float freqInHz;
+        float gain;
+        float shiftInCent;
+    } waveTableOscSpec;
 };

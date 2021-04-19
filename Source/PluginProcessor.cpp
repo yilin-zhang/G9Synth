@@ -23,7 +23,12 @@ G9SynthAudioProcessor::G9SynthAudioProcessor()
 #endif
        parameters(*this, nullptr, juce::Identifier("G9Synth"),
                   {
+                       std::make_unique<juce::AudioParameterFloat>("SinOsc#gain", "SinOsc#Gain", 0.0f, 1.0f, 0.3f),
                        std::make_unique<juce::AudioParameterFloat>("SinOsc#shiftInCent", "SinOsc#PitchShift", -100.0f, 100.0f, 0.0f),
+                       std::make_unique<juce::AudioParameterFloat>("SawOsc#gain", "SawOsc#Gain", 0.0f, 1.0f, 0.3f),
+                       std::make_unique<juce::AudioParameterFloat>("SawOsc#shiftInCent", "SawOsc#PitchShift", -100.0f, 100.0f, 0.0f),
+                       std::make_unique<juce::AudioParameterFloat>("SqrOsc#gain", "SqrOsc#Gain", 0.0f, 1.0f, 0.3f),
+                       std::make_unique<juce::AudioParameterFloat>("SqrOsc#shiftInCent", "SqrOsc#PitchShift", -100.0f, 100.0f, 0.0f),
                        std::make_unique<juce::AudioParameterFloat>("ADSR#attack", "ADSR#Attack", 0.0f, 10.0f, 0.1f),
                        std::make_unique<juce::AudioParameterFloat>("ADSR#decay", "ADSR#Decay", 0.0f, 10.0f, 0.1f),
                        std::make_unique<juce::AudioParameterFloat>("ADSR#sustain", "ADSR#Sustain", 0.0f, 1.0f, 1.0f),
@@ -36,7 +41,12 @@ G9SynthAudioProcessor::G9SynthAudioProcessor()
                        std::make_unique<juce::AudioParameterFloat>("Delay#mix", "Delay#Mix", 0.0f, 1.0f, 0.5f),
                   })
 {
+    parameters.addParameterListener("SinOsc#gain", this);
     parameters.addParameterListener("SinOsc#shiftInCent", this);
+    parameters.addParameterListener("SawOsc#gain", this);
+    parameters.addParameterListener("SawOsc#shiftInCent", this);
+    parameters.addParameterListener("SqrOsc#gain", this);
+    parameters.addParameterListener("SqrOsc#shiftInCent", this);
     parameters.addParameterListener("ADSR#attack", this);
     parameters.addParameterListener("ADSR#decay", this);
     parameters.addParameterListener("ADSR#sustain", this);
@@ -123,6 +133,12 @@ void G9SynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     sinWaveTable.initialize(4096); // the wave-table only initializes itself once
     sinOscillator.initialize(&sinWaveTable,0.f, sampleRate);
 
+    sawWaveTable.initialize(4096);
+    sawOscillator.initialize(&sawWaveTable,0.f, sampleRate);
+
+    sqrWaveTable.initialize(4096);
+    sqrOscillator.initialize(&sqrWaveTable,0.f, sampleRate);
+
     svf.prepare({sampleRate, static_cast<juce::uint32>(samplesPerBlock), 2});
 
     adsr.setSampleRate(sampleRate);
@@ -149,6 +165,8 @@ void G9SynthAudioProcessor::releaseResources()
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
     sinOscillator.reset();
+    sawOscillator.reset();
+    sqrOscillator.reset();
     vibrato.reset();
     svf.reset();
     adsr.reset();
@@ -205,6 +223,8 @@ void G9SynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
             adsr.noteOn();
             currentMIDINote = msg.getMessage().getNoteNumber();
             sinOscillator.setFrequency(juce::MidiMessage::getMidiNoteInHertz(currentMIDINote));
+            sawOscillator.setFrequency(juce::MidiMessage::getMidiNoteInHertz(currentMIDINote));
+            sqrOscillator.setFrequency(juce::MidiMessage::getMidiNoteInHertz(currentMIDINote));
         }
         else if (msg.getMessage().isNoteOff())
         {
@@ -217,7 +237,9 @@ void G9SynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     auto pp = buffer.getArrayOfWritePointers();
     for (auto i = 0; i < blockSize; ++i)
     {
-        auto val = sinOscillator.getNextSample();
+        auto val = sinOscillator.getNextSample() +
+                   sawOscillator.getNextSample() +
+                   sqrOscillator.getNextSample();
         for (auto c = 0; c < numChannels; ++c)
             pp[c][i] = val;
     }
@@ -267,10 +289,30 @@ void G9SynthAudioProcessor::setStateInformation (const void* data, int sizeInByt
 
 void G9SynthAudioProcessor::parameterChanged (const juce::String &parameterID, float newValue)
 {
-    // Sin oscillator
+    // Oscillators
+    if (parameterID == "SinOsc#gain")
+    {
+        sinOscillator.setGain(newValue);
+    }
     if (parameterID == "SinOsc#shiftInCent")
     {
         sinOscillator.shiftPitch(newValue);
+    }
+    if (parameterID == "SawOsc#gain")
+    {
+        sawOscillator.setGain(newValue);
+    }
+    if (parameterID == "SawOsc#shiftInCent")
+    {
+        sawOscillator.shiftPitch(newValue);
+    }
+    if (parameterID == "SqrOsc#gain")
+    {
+        sqrOscillator.setGain(newValue);
+    }
+    if (parameterID == "SqrOsc#shiftInCent")
+    {
+        sqrOscillator.shiftPitch(newValue);
     }
     // ADSR
     else if (parameterID == "ADSR#attack")

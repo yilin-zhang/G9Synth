@@ -62,8 +62,14 @@ public:
 
 private:
     juce::AudioProcessorValueTreeState parameters;
+
     SinWaveTable sinWaveTable;
     WaveTableOscillator sinOscillator;
+    SawWaveTable sawWaveTable;
+    WaveTableOscillator sawOscillator;
+    SqrWaveTable sqrWaveTable;
+    WaveTableOscillator sqrOscillator;
+
     Vibrato vibrato;
     juce::dsp::StateVariableFilter::Filter<float> svf;
     juce::ADSR adsr;

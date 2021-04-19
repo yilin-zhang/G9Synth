@@ -44,6 +44,14 @@ public:
     void initialize(int tableSize) override;
 };
 
+class TriWaveTable : public WaveTable
+{
+public:
+    TriWaveTable() = default;
+    ~TriWaveTable() override = default;
+    void initialize(int tableSize) override;
+};
+
 class SqrWaveTable : public WaveTable
 {
 public:
