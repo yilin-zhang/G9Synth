@@ -79,14 +79,14 @@ public:
 
 private:
     bool isInitialized;
-    float maximumDepthInS;
     juce::dsp::ProcessSpec processSpec;
-    WaveTableOscillator lfo;
-    SinWaveTable sinWaveTable;
-    CRingBuffer<float> **ppRingBuffer;
-    
     struct VibratoSpec
     {
         float depthInSamples; float freqInHz; float mix;
     } vibratoSpec;
+
+    float maximumDepthInS;
+    WaveTableOscillator lfo;
+    SinWaveTable sinWaveTable;
+    CRingBuffer<float> **ppRingBuffer;
 };

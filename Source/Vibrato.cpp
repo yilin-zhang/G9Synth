@@ -10,7 +10,9 @@
 
 #include "Vibrato.h"
 
-Vibrato::Vibrato():isInitialized(false), processSpec({0, 0, 0})
+Vibrato::Vibrato():
+isInitialized(false), processSpec({0, 0, 0}),
+vibratoSpec({0.f, 0.f, 0.f}), maximumDepthInS(0.f), ppRingBuffer(nullptr)
 {}
 
 Vibrato::~Vibrato()

@@ -12,7 +12,8 @@
 
 
 Delay::Delay():
-isInitialized(false), processSpec({0, 0, 0}), delaySpec({0.f, 0.f, 0.f})
+isInitialized(false), processSpec({0, 0, 0}),
+delaySpec({0.f, 0.f, 0.f}), maximumDelayInS(0.f), pDelayLine(nullptr)
 {}
 
 Delay::~Delay()
