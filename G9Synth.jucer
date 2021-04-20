@@ -6,6 +6,8 @@
   <MAINGROUP id="yvM98K" name="G9Synth">
     <GROUP id="{1CFBD44A-1F54-A445-141B-951F1D8E43F4}" name="Source">
       <GROUP id="{D24F9C64-0E56-B526-6114-55B05A8258DF}" name="Utils">
+        <FILE id="Pr4B3u" name="Filter.cpp" compile="1" resource="0" file="Source/Filter.cpp"/>
+        <FILE id="eNXEcn" name="Filter.h" compile="0" resource="0" file="Source/Filter.h"/>
         <FILE id="lba75P" name="RingBuffer.h" compile="0" resource="0" file="Source/RingBuffer.h"/>
         <FILE id="XIq8jY" name="Delay.cpp" compile="1" resource="0" file="Source/Delay.cpp"/>
         <FILE id="dLqwR1" name="Delay.h" compile="0" resource="0" file="Source/Delay.h"/>

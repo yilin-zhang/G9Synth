@@ -26,6 +26,8 @@ bool Delay::initialize(const juce::dsp::ProcessSpec& spec, float maximumDelayInS
     if (spec.numChannels <= 0 || maximumDelayInS <= 0.f)
         return false;
 
+    reset();
+
     // allocate memory
     int maximumDelayInSamples = ceil(spec.sampleRate * maximumDelayInS);
 
@@ -54,14 +56,11 @@ void Delay::reset()
 
     // release memory
     delete pDelayLine;
+    pDelayLine = nullptr;
 
-    processSpec.numChannels = 0;
-    processSpec.sampleRate = 0.0;
+    processSpec = {0.0, 0, 0};
+    delaySpec = {0.f, 0.f, 0.f};
     maximumDelayInS = 0.f;
-
-    delaySpec.feedback = 0.f;
-    delaySpec.delayInS = 0.f;
-    delaySpec.mix = 0.f;
 
     isInitialized = false;
 }

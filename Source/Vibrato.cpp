@@ -25,6 +25,8 @@ bool Vibrato::initialize(const juce::dsp::ProcessSpec &spec, float maximumDepthI
     if (maximumDepthInS <= 0)
         return false;
 
+    reset();
+
     // initialize the LFO
     sinWaveTable.initialize(4096); // the wave-table only initializes itself once
     lfo.initialize(&sinWaveTable, vibratoSpec.freqInHz, spec.sampleRate);
@@ -82,9 +84,9 @@ void Vibrato::reset()
     for (int c=0; c<processSpec.numChannels; ++c)
         delete ppRingBuffer[c];
     delete ppRingBuffer;
+    ppRingBuffer = nullptr;
 
-    processSpec.numChannels = 0;
-    processSpec.sampleRate = 0.0;
+    processSpec = {0.0, 0, 0};
     maximumDepthInS = 0.f;
 
     isInitialized = false;

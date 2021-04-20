@@ -29,16 +29,19 @@ G9SynthAudioProcessor::G9SynthAudioProcessor()
                        std::make_unique<juce::AudioParameterFloat>("SawOsc#shiftInCent", "SawOsc#PitchShift", -100.0f, 100.0f, 0.0f),
                        std::make_unique<juce::AudioParameterFloat>("SqrOsc#gain", "SqrOsc#Gain", 0.0f, 1.0f, 0.3f),
                        std::make_unique<juce::AudioParameterFloat>("SqrOsc#shiftInCent", "SqrOsc#PitchShift", -100.0f, 100.0f, 0.0f),
+                       std::make_unique<juce::AudioParameterChoice>("SVF#type", "SqrOsc#Type", juce::StringArray{"Lowpass", "Bandpass", "Highpass"}, 0),
+                       std::make_unique<juce::AudioParameterFloat>("SVF#cutoff", "SVF#Cutoff", 50.f, 8000.0f, 1000.f),
+                       std::make_unique<juce::AudioParameterFloat>("SVF#res", "SVF#Res", 0.01f, 1.f, 1/sqrt(2.0)),
                        std::make_unique<juce::AudioParameterFloat>("ADSR#attack", "ADSR#Attack", 0.0f, 10.0f, 0.1f),
                        std::make_unique<juce::AudioParameterFloat>("ADSR#decay", "ADSR#Decay", 0.0f, 10.0f, 0.1f),
                        std::make_unique<juce::AudioParameterFloat>("ADSR#sustain", "ADSR#Sustain", 0.0f, 1.0f, 1.0f),
                        std::make_unique<juce::AudioParameterFloat>("ADSR#release", "ADSR#Release", 0.0f, 10.0f, 0.1f),
                        std::make_unique<juce::AudioParameterFloat>("Vibrato#depth", "Vibrato#Depth", 0.0f, 0.2f, 0.1f),
                        std::make_unique<juce::AudioParameterFloat>("Vibrato#freq", "Vibrato#Freq", 0.0f, 10.0f, 5.f),
-                       std::make_unique<juce::AudioParameterFloat>("Vibrato#mix", "Vibrato#Mix", 0.0f, 1.0f, 1.0f),
+                       std::make_unique<juce::AudioParameterFloat>("Vibrato#mix", "Vibrato#Mix", 0.0f, 1.0f, 0.0f),
                        std::make_unique<juce::AudioParameterFloat>("Delay#time", "Delay#Time", 0.0f, 10.0f, 0.5f),
                        std::make_unique<juce::AudioParameterFloat>("Delay#feedback", "Delay#Feedback", 0.0f, 1.0f, 0.5f),
-                       std::make_unique<juce::AudioParameterFloat>("Delay#mix", "Delay#Mix", 0.0f, 1.0f, 0.5f),
+                       std::make_unique<juce::AudioParameterFloat>("Delay#mix", "Delay#Mix", 0.0f, 1.0f, 0.0f),
                   })
 {
     parameters.addParameterListener("SinOsc#gain", this);
@@ -47,6 +50,9 @@ G9SynthAudioProcessor::G9SynthAudioProcessor()
     parameters.addParameterListener("SawOsc#shiftInCent", this);
     parameters.addParameterListener("SqrOsc#gain", this);
     parameters.addParameterListener("SqrOsc#shiftInCent", this);
+    parameters.addParameterListener("SVF#type", this);
+    parameters.addParameterListener("SVF#cutoff", this);
+    parameters.addParameterListener("SVF#res", this);
     parameters.addParameterListener("ADSR#attack", this);
     parameters.addParameterListener("ADSR#decay", this);
     parameters.addParameterListener("ADSR#sustain", this);
@@ -139,7 +145,23 @@ void G9SynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     sqrWaveTable.initialize(4096);
     sqrOscillator.initialize(&sqrWaveTable,0.f, sampleRate);
 
-    svf.prepare({sampleRate, static_cast<juce::uint32>(samplesPerBlock), 2});
+    juce::uint32 numChannels = getTotalNumOutputChannels();
+
+    svf.initialize({sampleRate, static_cast<juce::uint32>(samplesPerBlock), numChannels});
+    switch (parameters.getParameter("SVF#type")->getParameterIndex())
+    {
+        case 0:
+            svf.setType(StateVariableFilter::Type::lowPass);
+            break;
+        case 1:
+            svf.setType(StateVariableFilter::Type::bandPass);
+            break;
+        case 2:
+            svf.setType(StateVariableFilter::Type::highPass);
+            break;
+    }
+    svf.setCutoffFrequency(parameters.getParameterAsValue("SVF#cutoff").getValue());
+    svf.setResonance(parameters.getParameterAsValue("SVF#res").getValue());
 
     adsr.setSampleRate(sampleRate);
     adsr.setParameters({
@@ -149,12 +171,12 @@ void G9SynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
                     parameters.getParameterAsValue("ADSR#release").getValue(),
             });
 
-    vibrato.initialize({sampleRate, static_cast<juce::uint32>(samplesPerBlock), 2}, 0.2);
+    vibrato.initialize({sampleRate, static_cast<juce::uint32>(samplesPerBlock), numChannels}, 0.2);
     vibrato.setDepth(parameters.getParameterAsValue("Vibrato#depth").getValue());
     vibrato.setFrequency(parameters.getParameterAsValue("Vibrato#freq").getValue());
     vibrato.setMix(parameters.getParameterAsValue("Vibrato#mix").getValue());
 
-    delay.initialize({sampleRate, static_cast<juce::uint32>(samplesPerBlock), 2}, 10);
+    delay.initialize({sampleRate, static_cast<juce::uint32>(samplesPerBlock), numChannels}, 10);
     delay.setDelayTime(parameters.getParameterAsValue("Delay#time").getValue());
     delay.setFeedback(parameters.getParameterAsValue("Delay#feedback").getValue());
     delay.setMix(parameters.getParameterAsValue("Delay#mix").getValue());
@@ -233,7 +255,7 @@ void G9SynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
         }
     }
 
-    // generate sin wave
+    // Oscillators
     auto pp = buffer.getArrayOfWritePointers();
     for (auto i = 0; i < blockSize; ++i)
     {
@@ -244,10 +266,12 @@ void G9SynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
             pp[c][i] = val;
     }
 
+    svf.process(buffer);
+
     // ADSR
     adsr.applyEnvelopeToBuffer(buffer, 0, blockSize);
 
-    // vibrato
+    // Vibrato
     vibrato.process(buffer);
 
     // Delay
@@ -294,26 +318,52 @@ void G9SynthAudioProcessor::parameterChanged (const juce::String &parameterID, f
     {
         sinOscillator.setGain(newValue);
     }
-    if (parameterID == "SinOsc#shiftInCent")
+    else if (parameterID == "SinOsc#shiftInCent")
     {
         sinOscillator.shiftPitch(newValue);
     }
-    if (parameterID == "SawOsc#gain")
+    else if (parameterID == "SawOsc#gain")
     {
         sawOscillator.setGain(newValue);
     }
-    if (parameterID == "SawOsc#shiftInCent")
+    else if (parameterID == "SawOsc#shiftInCent")
     {
         sawOscillator.shiftPitch(newValue);
     }
-    if (parameterID == "SqrOsc#gain")
+    else if (parameterID == "SqrOsc#gain")
     {
         sqrOscillator.setGain(newValue);
     }
-    if (parameterID == "SqrOsc#shiftInCent")
+    else if (parameterID == "SqrOsc#shiftInCent")
     {
         sqrOscillator.shiftPitch(newValue);
     }
+
+    // SVF
+    else if (parameterID == "SVF#type")
+    {
+        switch (parameters.getParameter("SVF#type")->getParameterIndex())
+        {
+            case 0:
+                svf.setType(StateVariableFilter::Type::lowPass);
+                break;
+            case 1:
+                svf.setType(StateVariableFilter::Type::bandPass);
+                break;
+            case 2:
+                svf.setType(StateVariableFilter::Type::highPass);
+                break;
+        }
+    }
+    else if (parameterID == "SVF#cutoff")
+    {
+        svf.setCutoffFrequency(newValue);
+    }
+    else if (parameterID == "SVF#res")
+    {
+        svf.setResonance(newValue);
+    }
+
     // ADSR
     else if (parameterID == "ADSR#attack")
     {

@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "Oscillator.h"
+#include "Filter.h"
 #include "Delay.h"
 #include "Vibrato.h"
 
@@ -71,7 +72,7 @@ private:
     WaveTableOscillator sqrOscillator;
 
     Vibrato vibrato;
-    juce::dsp::StateVariableFilter::Filter<float> svf;
+    StateVariableFilter svf;
     juce::ADSR adsr;
     Delay delay;
 
