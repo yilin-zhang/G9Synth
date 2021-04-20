@@ -11,7 +11,7 @@
 #include "Oscillator.h"
 
 WaveTableOscillator::WaveTableOscillator():
-table(nullptr), sampleRate(0),
+isInitialized(false), table(nullptr), sampleRate(0),
 waveTableOscSpec({0.f, 1.f, 0.f}) {}
 
 void WaveTableOscillator::initialize(const WaveTable *waveTable, float freqInHz, double sampleRate)
@@ -20,6 +20,8 @@ void WaveTableOscillator::initialize(const WaveTable *waveTable, float freqInHz,
     waveTableOscSpec.freqInHz = freqInHz;
     this->sampleRate = sampleRate;
     phase.reset();
+
+    isInitialized = true;
 }
 
 void WaveTableOscillator::resetWaveform()
@@ -30,16 +32,16 @@ void WaveTableOscillator::resetWaveform()
 void WaveTableOscillator::reset()
 {
     table = nullptr;
-    waveTableOscSpec.freqInHz = 0.f;
-    waveTableOscSpec.gain = 1.f;
-    waveTableOscSpec.shiftInCent = 0.f;
+    waveTableOscSpec = {0.f, 1.f, 0.f};
     sampleRate = 0;
     phase.reset();
+
+    isInitialized = false;
 }
 
 float WaveTableOscillator::getNextSample()
 {
-    if (sampleRate == 0)
+    if (!isInitialized || sampleRate == 0)
         return 0.f;
 
     // get a sample
@@ -58,6 +60,9 @@ float WaveTableOscillator::getNextSample()
 
 void WaveTableOscillator::getNextBlock(juce::AudioBuffer<float> &buffer)
 {
+    if (!isInitialized || sampleRate == 0)
+        return;
+
     const auto numSamples = buffer.getNumSamples();
     auto writePointer = buffer.getWritePointer(0);
     for (int i=0; i<numSamples; ++i)
@@ -66,6 +71,9 @@ void WaveTableOscillator::getNextBlock(juce::AudioBuffer<float> &buffer)
 
 void WaveTableOscillator::getNextBlock(float *buffer, int numSamples)
 {
+    if (!isInitialized || sampleRate == 0)
+        return;
+
     for (int i=0; i<numSamples; ++i)
         buffer[i] = getNextSample();
 }

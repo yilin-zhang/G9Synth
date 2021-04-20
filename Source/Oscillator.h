@@ -94,6 +94,7 @@ public:
     float getPitchShift() const;
 
 private:
+    bool isInitialized;
     const WaveTable *table;
     double sampleRate;
     juce::dsp::Phase<float> phase;
