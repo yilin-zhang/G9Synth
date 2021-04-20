@@ -62,7 +62,7 @@ public:
 
 private:
     bool isInitialized;
-    juce::dsp::ProcessSpec processSpec{};
+    juce::dsp::ProcessSpec processSpec;
     struct DelaySpec
     {
         float mix; float feedback; float delayInS;

@@ -10,12 +10,8 @@
 
 #include "Vibrato.h"
 
-Vibrato::Vibrato():isInitialized(false), numChannels(0), sampleRate(0.0)
-{
-    vibratoSpec.freqInHz = 0.f;
-    vibratoSpec.mix = 0.f;
-    vibratoSpec.depthInSamples = 0.f;
-}
+Vibrato::Vibrato():isInitialized(false), processSpec({0, 0, 0})
+{}
 
 Vibrato::~Vibrato()
 {
@@ -40,8 +36,8 @@ bool Vibrato::initialize(const juce::dsp::ProcessSpec &spec, float maximumDepthI
         ppRingBuffer[c] = new CRingBuffer<float>(maxDepthInSamples);
         ppRingBuffer[c]->setWriteIdx(static_cast<int>(round(maximumDepthInS*spec.sampleRate+1)));
     }
-    numChannels = spec.numChannels;
-    sampleRate = spec.sampleRate;
+
+    processSpec = spec;
 
     // set the member variables
     this->maximumDepthInS = maximumDepthInS;
@@ -61,7 +57,7 @@ void Vibrato::process(juce::AudioBuffer<float> &buffer)
     for (int i=0; i<bufferSize; ++i)
     {
         float fOffset = lfo.getNextSample();
-        for (int c=0; c<numChannels; ++c)
+        for (int c=0; c<processSpec.numChannels; ++c)
         {
             auto dry = ppBuffer[c][i];
             ppRingBuffer[c]->putPostInc(ppBuffer[c][i]);
@@ -81,12 +77,12 @@ void Vibrato::reset()
     clear();
 
     // release the memory
-    for (int c=0; c<numChannels; ++c)
+    for (int c=0; c<processSpec.numChannels; ++c)
         delete ppRingBuffer[c];
     delete ppRingBuffer;
 
-    numChannels = 0;
-    sampleRate = 0.0;
+    processSpec.numChannels = 0;
+    processSpec.sampleRate = 0.0;
     maximumDepthInS = 0.f;
 
     isInitialized = false;
@@ -98,7 +94,7 @@ void Vibrato::clear()
         return;
 
     // 1. clear the delay line
-    for (int c=0; c<numChannels; ++c)
+    for (int c=0; c<processSpec.numChannels; ++c)
         ppRingBuffer[c]->reset();
 
     // 2. reset the LFO
@@ -120,7 +116,7 @@ void Vibrato::setDepth(float depthInS)
         return;
 
     // 2. set the depth
-    vibratoSpec.depthInSamples = static_cast<float>(depthInS * sampleRate);
+    vibratoSpec.depthInSamples = static_cast<float>(depthInS * processSpec.sampleRate);
     lfo.setGain(vibratoSpec.depthInSamples);
 }
 

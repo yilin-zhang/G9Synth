@@ -80,8 +80,7 @@ public:
 private:
     bool isInitialized;
     float maximumDepthInS;
-    int numChannels;
-    double sampleRate;
+    juce::dsp::ProcessSpec processSpec;
     WaveTableOscillator lfo;
     SinWaveTable sinWaveTable;
     CRingBuffer<float> **ppRingBuffer;
