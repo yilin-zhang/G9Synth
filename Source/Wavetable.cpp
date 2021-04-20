@@ -103,7 +103,7 @@ void SqrWaveTable::initialize(int tableSize)
     auto writePointer = table.getWritePointer(0);
     for (int i=0; i<tableSize; ++i)
         if (i < tableSize / 2)
-            writePointer[i] = 0.f;
+            writePointer[i] = -1.f;
         else
             writePointer[i] = 1.f;
 }
