@@ -19,17 +19,17 @@
         <FILE id="O3LwYy" name="VibratoUI.h" compile="0" resource="0" file="Source/gui/VibratoUI.h"/>
       </GROUP>
       <GROUP id="{D24F9C64-0E56-B526-6114-55B05A8258DF}" name="dsp">
-        <FILE id="JFmpQ2" name="Delay.cpp" compile="1" resource="0" file="Source/DSP/Delay.cpp"/>
-        <FILE id="Fb1OpE" name="Delay.h" compile="0" resource="0" file="Source/DSP/Delay.h"/>
-        <FILE id="mCM27J" name="Filter.cpp" compile="1" resource="0" file="Source/DSP/Filter.cpp"/>
-        <FILE id="oSamUj" name="Filter.h" compile="0" resource="0" file="Source/DSP/Filter.h"/>
-        <FILE id="NOMRwk" name="Oscillator.cpp" compile="1" resource="0" file="Source/DSP/Oscillator.cpp"/>
-        <FILE id="B0VhX9" name="Oscillator.h" compile="0" resource="0" file="Source/DSP/Oscillator.h"/>
-        <FILE id="uIPE8D" name="RingBuffer.h" compile="0" resource="0" file="Source/DSP/RingBuffer.h"/>
-        <FILE id="UCX1wu" name="Vibrato.cpp" compile="1" resource="0" file="Source/DSP/Vibrato.cpp"/>
-        <FILE id="xnMfEr" name="Vibrato.h" compile="0" resource="0" file="Source/DSP/Vibrato.h"/>
-        <FILE id="SRubbx" name="WaveTable.cpp" compile="1" resource="0" file="Source/DSP/WaveTable.cpp"/>
-        <FILE id="NqwNXr" name="WaveTable.h" compile="0" resource="0" file="Source/DSP/WaveTable.h"/>
+        <FILE id="Hr4Czq" name="Delay.cpp" compile="1" resource="0" file="Source/dsp/Delay.cpp"/>
+        <FILE id="QxcuJz" name="Delay.h" compile="0" resource="0" file="Source/dsp/Delay.h"/>
+        <FILE id="TjeEAr" name="Filter.cpp" compile="1" resource="0" file="Source/dsp/Filter.cpp"/>
+        <FILE id="wWmNVX" name="Filter.h" compile="0" resource="0" file="Source/dsp/Filter.h"/>
+        <FILE id="I4FvPj" name="Oscillator.cpp" compile="1" resource="0" file="Source/dsp/Oscillator.cpp"/>
+        <FILE id="PatN3Z" name="Oscillator.h" compile="0" resource="0" file="Source/dsp/Oscillator.h"/>
+        <FILE id="a0S1Fw" name="RingBuffer.h" compile="0" resource="0" file="Source/dsp/RingBuffer.h"/>
+        <FILE id="oWVKVV" name="Vibrato.cpp" compile="1" resource="0" file="Source/dsp/Vibrato.cpp"/>
+        <FILE id="ehFYLv" name="Vibrato.h" compile="0" resource="0" file="Source/dsp/Vibrato.h"/>
+        <FILE id="PZXOHb" name="WaveTable.cpp" compile="1" resource="0" file="Source/dsp/WaveTable.cpp"/>
+        <FILE id="rnTxzT" name="WaveTable.h" compile="0" resource="0" file="Source/dsp/WaveTable.h"/>
       </GROUP>
       <FILE id="ey1vmR" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
