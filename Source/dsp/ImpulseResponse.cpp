@@ -119,6 +119,11 @@ bool ImpulseResponse::getBypassed() const
 
 void ImpulseResponse::setMix(float value)
 {
+    if (value > 1.f)
+        value = 1.f;
+    else if (value < 0.f)
+        value = 0.f;
+
     impulseResponseSpec.mix = value;
 }
 

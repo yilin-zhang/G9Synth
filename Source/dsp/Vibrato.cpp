@@ -135,7 +135,7 @@ void Vibrato::setFrequency(float freqInHz)
 
     // 1. check the frequency is not less than 0
     if (freqInHz <= 0)
-        return;
+        freqInHz = 0.f;
 
     // 2. set the frequency
     vibratoSpec.freqInHz = freqInHz;
@@ -147,8 +147,10 @@ void Vibrato::setMix(float value)
         return;
 
     // 1. bound the value inside 0~1
-    if (value < 0 || value > 1)
-        return;
+    if (value > 1.f)
+        value = 1.f;
+    else if (value < 0.f)
+        value = 0.f;
 
     // 2. set the mix in vibratoSpec
     vibratoSpec.mix = value;

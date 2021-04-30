@@ -91,10 +91,12 @@ void Delay::process(juce::AudioBuffer<float> &buffer)
 
 void Delay::setMix(float value)
 {
+    if (!isInitialized)
+        return;
+
     if (value > 1.f)
         value = 1.f;
-
-    if (value < 0.f)
+    else if (value < 0.f)
         value = 0.f;
 
     delaySpec.mix = value;
@@ -102,10 +104,12 @@ void Delay::setMix(float value)
 
 void Delay::setFeedback(float value)
 {
+    if (!isInitialized)
+        return;
+
     if (value > 1.f)
         value = 1.f;
-
-    if (value < 0.f)
+    else if (value < 0.f)
         value = 0.f;
 
     delaySpec.feedback = value;
@@ -113,12 +117,13 @@ void Delay::setFeedback(float value)
 
 void Delay::setDelayTime(float value)
 {
-    if (value < 0.f)
+    if (!isInitialized)
         return;
+
+    if (value < 0.f)
+        value = 0.f;
 
     delaySpec.delayInS = value;
 
-    if (!isInitialized)
-        return;
 }
 
