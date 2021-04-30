@@ -65,7 +65,7 @@ private:
     juce::dsp::ProcessSpec processSpec;
     struct DelaySpec
     {
-        float mix; float feedback; float delayInS;
+        std::atomic<float> mix; std::atomic<float> feedback; std::atomic<float> delayInS;
     } delaySpec;
 
     float maximumDelayInS;

@@ -82,7 +82,7 @@ private:
     juce::dsp::ProcessSpec processSpec;
     struct VibratoSpec
     {
-        float depthInSamples; float freqInHz; float mix;
+        std::atomic<float> depthInSamples; std::atomic<float> freqInHz; std::atomic<float> mix;
     } vibratoSpec;
 
     float maximumDepthInS;

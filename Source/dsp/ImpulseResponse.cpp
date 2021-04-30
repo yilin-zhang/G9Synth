@@ -10,9 +10,10 @@
 
 #include "ImpulseResponse.h"
 
-ImpulseResponse::ImpulseResponse() : isInitialized(false),
-                                     processSpec({0, 0, 0}),
-                                     impulseResponseSpec({true, 0.f}) {}
+ImpulseResponse::ImpulseResponse() : isInitialized(false), processSpec({0, 0, 0})
+{
+    impulseResponseSpec.isBypassed = true; impulseResponseSpec.mix = 0.f;
+}
 
 ImpulseResponse::~ImpulseResponse() {}
 
@@ -68,7 +69,8 @@ void ImpulseResponse::reset()
     if (!isInitialized)
         return;
 
-    impulseResponseSpec = {true, 0.f};
+    processSpec = {0.0, 0, 0};
+    impulseResponseSpec.isBypassed = true; impulseResponseSpec.mix = 0.f;
     // NOTE: will this make convolution prepare again?
     convolution.reset();
 

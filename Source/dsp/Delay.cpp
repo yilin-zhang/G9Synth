@@ -13,8 +13,10 @@
 
 Delay::Delay():
 isInitialized(false), processSpec({0, 0, 0}),
-delaySpec({0.f, 0.f, 0.f}), maximumDelayInS(0.f), pDelayLine(nullptr)
-{}
+maximumDelayInS(0.f), pDelayLine(nullptr)
+{
+    delaySpec.mix = 0.f; delaySpec.delayInS = 0.f; delaySpec.feedback = 0.f;
+}
 
 Delay::~Delay()
 {
@@ -59,7 +61,7 @@ void Delay::reset()
     pDelayLine = nullptr;
 
     processSpec = {0.0, 0, 0};
-    delaySpec = {0.f, 0.f, 0.f};
+    delaySpec.mix = 0.f; delaySpec.delayInS = 0.f; delaySpec.feedback = 0.f;
     maximumDelayInS = 0.f;
 
     isInitialized = false;
@@ -71,8 +73,11 @@ void Delay::process(juce::AudioBuffer<float> &buffer)
     auto numSamples = buffer.getNumSamples();
     auto ppBuffer = buffer.getArrayOfWritePointers();
 
+    float delayInS;
     for (int i=0; i<numSamples; ++i)
     {
+        delayInS = delaySpec.delayInS;
+        pDelayLine->setDelay(delayInS * processSpec.sampleRate);
         for (int c=0; c<numChannels; ++c)
         {
             auto sampleInLine = pDelayLine->popSample(c);
@@ -115,7 +120,5 @@ void Delay::setDelayTime(float value)
 
     if (!isInitialized)
         return;
-
-    pDelayLine->setDelay(value * processSpec.sampleRate);
 }
 

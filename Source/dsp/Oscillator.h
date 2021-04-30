@@ -100,8 +100,8 @@ private:
     juce::dsp::Phase<float> phase;
     struct WaveTableOscillatorSpec
     {
-        float freqInHz;
-        float gain;
-        float shiftInCent;
-    } waveTableOscSpec;
+        std::atomic<float> freqInHz;
+        std::atomic<float> gain;
+        std::atomic<float> shiftInCent;
+    } waveTableOscSpec{};
 };

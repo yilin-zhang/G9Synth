@@ -11,8 +11,10 @@
 #include "Oscillator.h"
 
 WaveTableOscillator::WaveTableOscillator():
-isInitialized(false), table(nullptr), sampleRate(0),
-waveTableOscSpec({0.f, 1.f, 0.f}) {}
+isInitialized(false), table(nullptr), sampleRate(0)
+{
+    waveTableOscSpec.freqInHz = 0.f; waveTableOscSpec.gain = 1.f; waveTableOscSpec.shiftInCent = 0.f;
+}
 
 void WaveTableOscillator::initialize(const WaveTable *waveTable, float freqInHz, double sampleRate)
 {
@@ -32,7 +34,7 @@ void WaveTableOscillator::resetWaveform()
 void WaveTableOscillator::reset()
 {
     table = nullptr;
-    waveTableOscSpec = {0.f, 1.f, 0.f};
+    waveTableOscSpec.freqInHz = 0.f; waveTableOscSpec.gain = 1.f; waveTableOscSpec.shiftInCent = 0.f;
     sampleRate = 0;
     phase.reset();
 

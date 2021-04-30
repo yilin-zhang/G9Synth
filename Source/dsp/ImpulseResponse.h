@@ -69,7 +69,7 @@ private:
     juce::dsp::ProcessSpec processSpec;
     struct ImpulseResponseSpec
     {
-        bool isBypassed; float mix;
+        std::atomic<bool> isBypassed; std::atomic<float> mix;
     } impulseResponseSpec;
 
     juce::AudioBuffer<float> dryBuffer;

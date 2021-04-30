@@ -12,8 +12,10 @@
 
 Vibrato::Vibrato():
 isInitialized(false), processSpec({0, 0, 0}),
-vibratoSpec({0.f, 0.f, 0.f}), maximumDepthInS(0.f), ppRingBuffer(nullptr)
-{}
+maximumDepthInS(0.f), ppRingBuffer(nullptr)
+{
+    vibratoSpec.freqInHz = 0.f; vibratoSpec.mix = 0.f; vibratoSpec.depthInSamples = 0.f;
+}
 
 Vibrato::~Vibrato()
 {
@@ -58,9 +60,16 @@ void Vibrato::process(juce::AudioBuffer<float> &buffer)
     // Assume the number of channels in the buffer is the same as the `numChannels`
     auto ppBuffer = buffer.getArrayOfWritePointers();
 
+    float fOffset, freqInHz, depthInSamples;
     for (int i=0; i<bufferSize; ++i)
     {
-        float fOffset = lfo.getNextSample();
+        // get parameters
+        freqInHz = vibratoSpec.freqInHz;
+        depthInSamples = vibratoSpec.depthInSamples;
+        // update parameters
+        fOffset = lfo.getNextSample();
+        lfo.setFrequency(freqInHz);
+        lfo.setGain(depthInSamples);
         for (int c=0; c<processSpec.numChannels; ++c)
         {
             auto dry = ppBuffer[c][i];
@@ -87,6 +96,7 @@ void Vibrato::reset()
     ppRingBuffer = nullptr;
 
     processSpec = {0.0, 0, 0};
+    vibratoSpec.freqInHz = 0.f; vibratoSpec.mix = 0.f; vibratoSpec.depthInSamples = 0.f;
     maximumDepthInS = 0.f;
 
     isInitialized = false;
@@ -103,11 +113,6 @@ void Vibrato::clear()
 
     // 2. reset the LFO
     lfo.reset();
-
-    // 3. reset the vibratoSpec
-    vibratoSpec.freqInHz = 0.f;
-    vibratoSpec.mix = 0.f;
-    vibratoSpec.depthInSamples = 0.f;
 }
 
 void Vibrato::setDepth(float depthInS)
@@ -121,7 +126,6 @@ void Vibrato::setDepth(float depthInS)
 
     // 2. set the depth
     vibratoSpec.depthInSamples = static_cast<float>(depthInS * processSpec.sampleRate);
-    lfo.setGain(vibratoSpec.depthInSamples);
 }
 
 void Vibrato::setFrequency(float freqInHz)
@@ -133,9 +137,7 @@ void Vibrato::setFrequency(float freqInHz)
     if (freqInHz <= 0)
         return;
 
-    // 2. set the frequency of the LFO
-    lfo.setFrequency(freqInHz);
-
+    // 2. set the frequency
     vibratoSpec.freqInHz = freqInHz;
 }
 
