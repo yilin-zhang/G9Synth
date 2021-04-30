@@ -13,6 +13,7 @@
 #include "dsp/Filter.h"
 #include "dsp/Delay.h"
 #include "dsp/Vibrato.h"
+#include "dsp/ImpulseResponse.h"
 
 //==============================================================================
 /**
@@ -63,6 +64,8 @@ public:
 
     //==============================================================================
     juce::AudioProcessorValueTreeState& getValueTreeState();
+    void loadIR(const juce::String &path);
+
 private:
     juce::AudioProcessorValueTreeState parameters;
 
@@ -77,6 +80,7 @@ private:
     StateVariableFilter svf;
     juce::ADSR adsr;
     Delay delay;
+    ImpulseResponse ir;
 
     int currentMIDINote;
 

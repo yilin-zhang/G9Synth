@@ -12,6 +12,10 @@
         <FILE id="Mla2Uj" name="EnvUI.h" compile="0" resource="0" file="Source/gui/EnvUI.h"/>
         <FILE id="tRQDsj" name="FilterUI.cpp" compile="1" resource="0" file="Source/gui/FilterUI.cpp"/>
         <FILE id="rpmWHt" name="FilterUI.h" compile="0" resource="0" file="Source/gui/FilterUI.h"/>
+        <FILE id="q2ozTr" name="ImpulseResponseUI.cpp" compile="1" resource="0"
+              file="Source/gui/ImpulseResponseUI.cpp"/>
+        <FILE id="JehFjL" name="ImpulseResponseUI.h" compile="0" resource="0"
+              file="Source/gui/ImpulseResponseUI.h"/>
         <FILE id="phVczV" name="OscillatorUI.cpp" compile="1" resource="0"
               file="Source/gui/OscillatorUI.cpp"/>
         <FILE id="dZM9Qw" name="OscillatorUI.h" compile="0" resource="0" file="Source/gui/OscillatorUI.h"/>
@@ -23,6 +27,10 @@
         <FILE id="QxcuJz" name="Delay.h" compile="0" resource="0" file="Source/dsp/Delay.h"/>
         <FILE id="TjeEAr" name="Filter.cpp" compile="1" resource="0" file="Source/dsp/Filter.cpp"/>
         <FILE id="wWmNVX" name="Filter.h" compile="0" resource="0" file="Source/dsp/Filter.h"/>
+        <FILE id="vYuOd1" name="ImpulseResponse.cpp" compile="1" resource="0"
+              file="Source/dsp/ImpulseResponse.cpp"/>
+        <FILE id="w19kpP" name="ImpulseResponse.h" compile="0" resource="0"
+              file="Source/dsp/ImpulseResponse.h"/>
         <FILE id="I4FvPj" name="Oscillator.cpp" compile="1" resource="0" file="Source/dsp/Oscillator.cpp"/>
         <FILE id="PatN3Z" name="Oscillator.h" compile="0" resource="0" file="Source/dsp/Oscillator.h"/>
         <FILE id="a0S1Fw" name="RingBuffer.h" compile="0" resource="0" file="Source/dsp/RingBuffer.h"/>

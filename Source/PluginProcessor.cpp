@@ -42,6 +42,9 @@ G9SynthAudioProcessor::G9SynthAudioProcessor()
                        std::make_unique<juce::AudioParameterFloat>("Delay#time", "Delay#Time", 0.0f, 10.0f, 0.5f),
                        std::make_unique<juce::AudioParameterFloat>("Delay#feedback", "Delay#Feedback", 0.0f, 1.0f, 0.5f),
                        std::make_unique<juce::AudioParameterFloat>("Delay#mix", "Delay#Mix", 0.0f, 1.0f, 0.0f),
+                       // TODO: The IR wav path is not stored
+                       std::make_unique<juce::AudioParameterBool>("IR#bypassed", "IR#Bypassed", true),
+                       std::make_unique<juce::AudioParameterFloat>("IR#mix", "Delay#Mix", 0.0f, 1.0f, 0.0f),
                   })
 {
     parameters.addParameterListener("SinOsc#gain", this);
@@ -63,6 +66,8 @@ G9SynthAudioProcessor::G9SynthAudioProcessor()
     parameters.addParameterListener("Delay#time", this);
     parameters.addParameterListener("Delay#feedback", this);
     parameters.addParameterListener("Delay#mix", this);
+    parameters.addParameterListener("IR#bypassed", this);
+    parameters.addParameterListener("IR#mix", this);
 }
 
 G9SynthAudioProcessor::~G9SynthAudioProcessor()
@@ -175,6 +180,10 @@ void G9SynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     delay.setDelayTime(parameters.getParameterAsValue("Delay#time").getValue());
     delay.setFeedback(parameters.getParameterAsValue("Delay#feedback").getValue());
     delay.setMix(parameters.getParameterAsValue("Delay#mix").getValue());
+
+    ir.initialize({sampleRate, static_cast<juce::uint32>(samplesPerBlock), numChannels});
+    ir.setBypass(parameters.getParameterAsValue("IR#bypassed").getValue());
+    ir.setMix(parameters.getParameterAsValue("IR#mix").getValue());
 }
 
 void G9SynthAudioProcessor::releaseResources()
@@ -188,6 +197,7 @@ void G9SynthAudioProcessor::releaseResources()
     svf.reset();
     adsr.reset();
     delay.reset();
+    ir.reset();
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -271,6 +281,9 @@ void G9SynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
 
     // Delay
     delay.process(buffer);
+
+    // IR
+    ir.process(buffer);
 }
 
 //==============================================================================
@@ -406,11 +419,26 @@ void G9SynthAudioProcessor::parameterChanged (const juce::String &parameterID, f
     {
         delay.setMix(newValue);
     }
+    // IR
+    else if (parameterID == "IR#bypassed")
+    {
+        DBG(newValue);
+        ir.setBypass(static_cast<bool>(newValue));
+    }
+    else if (parameterID == "IR#mix")
+    {
+        ir.setMix(newValue);
+    }
 }
 
 juce::AudioProcessorValueTreeState& G9SynthAudioProcessor::getValueTreeState()
 {
     return parameters;
+}
+
+void G9SynthAudioProcessor::loadIR(const juce::String &path)
+{
+    ir.loadImpulseResponse(path);
 }
 
 //==============================================================================

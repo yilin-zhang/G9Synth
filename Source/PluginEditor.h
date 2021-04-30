@@ -16,6 +16,7 @@
 #include "gui/EnvUI.h"
 #include "gui/VibratoUI.h"
 #include "gui/DelayUI.h"
+#include "gui/ImpulseResponseUI.h"
 
 //==============================================================================
 /**
@@ -41,6 +42,7 @@ private:
     EnvUI envUI;
     VibratoUI vibratoUI;
     DelayUI delayUI;
+    ImpulseResponseUI irUI;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (G9SynthAudioProcessorEditor)
 };
