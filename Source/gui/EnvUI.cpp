@@ -35,7 +35,6 @@ release {juce::Slider::LinearVertical, juce::Slider::TextBoxBelow}
     decayAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(parameters, "ADSR#decay", decay);
 
     addAndMakeVisible(sustain);
-    sustain.setTextValueSuffix(" s");
     sustainLabel.setText("Sustain", juce::dontSendNotification);
     sustainLabel.attachToComponent(&sustain, false);
     sustainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(parameters, "ADSR#sustain", sustain);

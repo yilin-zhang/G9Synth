@@ -23,34 +23,34 @@ sqrShiftInCent {juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow}
     setSize(225, 250);
 
     addAndMakeVisible(sinGain);
-    sinGainLabel.setText("Sine OSC", juce::dontSendNotification);
+    sinGainLabel.setText("Sine", juce::dontSendNotification);
     sinGainLabel.attachToComponent(&sinGain, false);
     sinGainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(parameters, "SinOsc#gain", sinGain);
 
     addAndMakeVisible(sinShiftInCent);
-    sinShiftInCent.setTextValueSuffix(" cent");
+    sinShiftInCent.setTextValueSuffix(" ct");
     sinShiftInCentLabel.setText("Pitch Shift", juce::dontSendNotification);
     sinShiftInCentLabel.attachToComponent(&sinShiftInCent, false);
     sinShiftInCentAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(parameters, "SinOsc#shiftInCent", sinShiftInCent);
 
     addAndMakeVisible(sawGain);
-    sawGainLabel.setText("Saw OSC", juce::dontSendNotification);
+    sawGainLabel.setText("Saw", juce::dontSendNotification);
     sawGainLabel.attachToComponent(&sawGain, false);
     sawGainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(parameters, "SawOsc#gain", sawGain);
 
     addAndMakeVisible(sawShiftInCent);
-    sawShiftInCent.setTextValueSuffix(" cent");
+    sawShiftInCent.setTextValueSuffix(" ct");
     sawShiftInCentLabel.setText("Pitch Shift", juce::dontSendNotification);
     sawShiftInCentLabel.attachToComponent(&sawShiftInCent, false);
     sawShiftInCentAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(parameters, "SawOsc#shiftInCent", sawShiftInCent);
 
     addAndMakeVisible(sqrGain);
-    sqrGainLabel.setText("Sqr OSC", juce::dontSendNotification);
+    sqrGainLabel.setText("Square", juce::dontSendNotification);
     sqrGainLabel.attachToComponent(&sqrGain, false);
     sqrGainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(parameters, "SqrOsc#gain", sqrGain);
 
     addAndMakeVisible(sqrShiftInCent);
-    sqrShiftInCent.setTextValueSuffix(" cent");
+    sqrShiftInCent.setTextValueSuffix(" ct");
     sqrShiftInCentLabel.setText("Pitch Shift", juce::dontSendNotification);
     sqrShiftInCentLabel.attachToComponent(&sqrShiftInCent, false);
     sqrShiftInCentAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(parameters, "SqrOsc#shiftInCent", sqrShiftInCent);
