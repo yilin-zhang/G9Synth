@@ -10,7 +10,7 @@
 
 #pragma once
 #include <JuceHeader.h>
-#include "PluginProcessor.h"
+#include "../PluginProcessor.h"
 
 class OscillatorUI : public juce::Component
 {

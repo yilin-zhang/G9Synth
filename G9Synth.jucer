@@ -5,31 +5,31 @@
               pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn">
   <MAINGROUP id="yvM98K" name="G9Synth">
     <GROUP id="{1CFBD44A-1F54-A445-141B-951F1D8E43F4}" name="Source">
-      <GROUP id="{C29126DD-9E22-940E-E30B-B7F4211CC87B}" name="UI">
-        <FILE id="mxAoEb" name="DelayUI.cpp" compile="1" resource="0" file="Source/DelayUI.cpp"/>
-        <FILE id="a6wUMa" name="DelayUI.h" compile="0" resource="0" file="Source/DelayUI.h"/>
-        <FILE id="SCIbFC" name="EnvUI.cpp" compile="1" resource="0" file="Source/EnvUI.cpp"/>
-        <FILE id="KBQBoo" name="EnvUI.h" compile="0" resource="0" file="Source/EnvUI.h"/>
-        <FILE id="VUwtQO" name="FilterUI.cpp" compile="1" resource="0" file="Source/FilterUI.cpp"/>
-        <FILE id="tCmKO3" name="FilterUI.h" compile="0" resource="0" file="Source/FilterUI.h"/>
-        <FILE id="VPlIrn" name="OscillatorUI.cpp" compile="1" resource="0"
-              file="Source/OscillatorUI.cpp"/>
-        <FILE id="YovKbl" name="OscillatorUI.h" compile="0" resource="0" file="Source/OscillatorUI.h"/>
-        <FILE id="jASyvv" name="VibratoUI.cpp" compile="1" resource="0" file="Source/VibratoUI.cpp"/>
-        <FILE id="SAXIyK" name="VibratoUI.h" compile="0" resource="0" file="Source/VibratoUI.h"/>
+      <GROUP id="{C29126DD-9E22-940E-E30B-B7F4211CC87B}" name="gui">
+        <FILE id="dUS3x5" name="DelayUI.cpp" compile="1" resource="0" file="Source/gui/DelayUI.cpp"/>
+        <FILE id="UPLxtF" name="DelayUI.h" compile="0" resource="0" file="Source/gui/DelayUI.h"/>
+        <FILE id="mrdsYc" name="EnvUI.cpp" compile="1" resource="0" file="Source/gui/EnvUI.cpp"/>
+        <FILE id="Mla2Uj" name="EnvUI.h" compile="0" resource="0" file="Source/gui/EnvUI.h"/>
+        <FILE id="tRQDsj" name="FilterUI.cpp" compile="1" resource="0" file="Source/gui/FilterUI.cpp"/>
+        <FILE id="rpmWHt" name="FilterUI.h" compile="0" resource="0" file="Source/gui/FilterUI.h"/>
+        <FILE id="phVczV" name="OscillatorUI.cpp" compile="1" resource="0"
+              file="Source/gui/OscillatorUI.cpp"/>
+        <FILE id="dZM9Qw" name="OscillatorUI.h" compile="0" resource="0" file="Source/gui/OscillatorUI.h"/>
+        <FILE id="UC3SKF" name="VibratoUI.cpp" compile="1" resource="0" file="Source/gui/VibratoUI.cpp"/>
+        <FILE id="O3LwYy" name="VibratoUI.h" compile="0" resource="0" file="Source/gui/VibratoUI.h"/>
       </GROUP>
-      <GROUP id="{D24F9C64-0E56-B526-6114-55B05A8258DF}" name="Utils">
-        <FILE id="Pr4B3u" name="Filter.cpp" compile="1" resource="0" file="Source/Filter.cpp"/>
-        <FILE id="eNXEcn" name="Filter.h" compile="0" resource="0" file="Source/Filter.h"/>
-        <FILE id="lba75P" name="RingBuffer.h" compile="0" resource="0" file="Source/RingBuffer.h"/>
-        <FILE id="XIq8jY" name="Delay.cpp" compile="1" resource="0" file="Source/Delay.cpp"/>
-        <FILE id="dLqwR1" name="Delay.h" compile="0" resource="0" file="Source/Delay.h"/>
-        <FILE id="zC6IcO" name="Oscillator.cpp" compile="1" resource="0" file="Source/Oscillator.cpp"/>
-        <FILE id="xI0hII" name="Oscillator.h" compile="0" resource="0" file="Source/Oscillator.h"/>
-        <FILE id="uOjfJV" name="Vibrato.cpp" compile="1" resource="0" file="Source/Vibrato.cpp"/>
-        <FILE id="dyvrZV" name="Vibrato.h" compile="0" resource="0" file="Source/Vibrato.h"/>
-        <FILE id="pbSl6L" name="WaveTable.cpp" compile="1" resource="0" file="Source/WaveTable.cpp"/>
-        <FILE id="JjSdK8" name="WaveTable.h" compile="0" resource="0" file="Source/WaveTable.h"/>
+      <GROUP id="{D24F9C64-0E56-B526-6114-55B05A8258DF}" name="dsp">
+        <FILE id="JFmpQ2" name="Delay.cpp" compile="1" resource="0" file="Source/DSP/Delay.cpp"/>
+        <FILE id="Fb1OpE" name="Delay.h" compile="0" resource="0" file="Source/DSP/Delay.h"/>
+        <FILE id="mCM27J" name="Filter.cpp" compile="1" resource="0" file="Source/DSP/Filter.cpp"/>
+        <FILE id="oSamUj" name="Filter.h" compile="0" resource="0" file="Source/DSP/Filter.h"/>
+        <FILE id="NOMRwk" name="Oscillator.cpp" compile="1" resource="0" file="Source/DSP/Oscillator.cpp"/>
+        <FILE id="B0VhX9" name="Oscillator.h" compile="0" resource="0" file="Source/DSP/Oscillator.h"/>
+        <FILE id="uIPE8D" name="RingBuffer.h" compile="0" resource="0" file="Source/DSP/RingBuffer.h"/>
+        <FILE id="UCX1wu" name="Vibrato.cpp" compile="1" resource="0" file="Source/DSP/Vibrato.cpp"/>
+        <FILE id="xnMfEr" name="Vibrato.h" compile="0" resource="0" file="Source/DSP/Vibrato.h"/>
+        <FILE id="SRubbx" name="WaveTable.cpp" compile="1" resource="0" file="Source/DSP/WaveTable.cpp"/>
+        <FILE id="NqwNXr" name="WaveTable.h" compile="0" resource="0" file="Source/DSP/WaveTable.h"/>
       </GROUP>
       <FILE id="ey1vmR" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>

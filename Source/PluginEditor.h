@@ -11,11 +11,11 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 
-#include "OscillatorUI.h"
-#include "FilterUI.h"
-#include "EnvUI.h"
-#include "VibratoUI.h"
-#include "DelayUI.h"
+#include "gui/OscillatorUI.h"
+#include "gui/FilterUI.h"
+#include "gui/EnvUI.h"
+#include "gui/VibratoUI.h"
+#include "gui/DelayUI.h"
 
 //==============================================================================
 /**

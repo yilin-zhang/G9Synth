@@ -9,10 +9,10 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "Oscillator.h"
-#include "Filter.h"
-#include "Delay.h"
-#include "Vibrato.h"
+#include "dsp/Oscillator.h"
+#include "dsp/Filter.h"
+#include "dsp/Delay.h"
+#include "dsp/Vibrato.h"
 
 //==============================================================================
 /**

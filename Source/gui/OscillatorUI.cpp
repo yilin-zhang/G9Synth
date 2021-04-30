@@ -72,8 +72,6 @@ void OscillatorUI::paint(juce::Graphics &g)
 
 void OscillatorUI::resized()
 {
-    juce::Rectangle<int> area = getLocalBounds().reduced(40);
-
     juce::Rectangle<int> barSize (0, 0, 50, 100);
     juce::Rectangle<int> knobSize (0, 0, 70, 70);
 
