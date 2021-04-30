@@ -5,6 +5,19 @@
               pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn">
   <MAINGROUP id="yvM98K" name="G9Synth">
     <GROUP id="{1CFBD44A-1F54-A445-141B-951F1D8E43F4}" name="Source">
+      <GROUP id="{C29126DD-9E22-940E-E30B-B7F4211CC87B}" name="UI">
+        <FILE id="mxAoEb" name="DelayUI.cpp" compile="1" resource="0" file="Source/DelayUI.cpp"/>
+        <FILE id="a6wUMa" name="DelayUI.h" compile="0" resource="0" file="Source/DelayUI.h"/>
+        <FILE id="SCIbFC" name="EnvUI.cpp" compile="1" resource="0" file="Source/EnvUI.cpp"/>
+        <FILE id="KBQBoo" name="EnvUI.h" compile="0" resource="0" file="Source/EnvUI.h"/>
+        <FILE id="VUwtQO" name="FilterUI.cpp" compile="1" resource="0" file="Source/FilterUI.cpp"/>
+        <FILE id="tCmKO3" name="FilterUI.h" compile="0" resource="0" file="Source/FilterUI.h"/>
+        <FILE id="VPlIrn" name="OscillatorUI.cpp" compile="1" resource="0"
+              file="Source/OscillatorUI.cpp"/>
+        <FILE id="YovKbl" name="OscillatorUI.h" compile="0" resource="0" file="Source/OscillatorUI.h"/>
+        <FILE id="jASyvv" name="VibratoUI.cpp" compile="1" resource="0" file="Source/VibratoUI.cpp"/>
+        <FILE id="SAXIyK" name="VibratoUI.h" compile="0" resource="0" file="Source/VibratoUI.h"/>
+      </GROUP>
       <GROUP id="{D24F9C64-0E56-B526-6114-55B05A8258DF}" name="Utils">
         <FILE id="Pr4B3u" name="Filter.cpp" compile="1" resource="0" file="Source/Filter.cpp"/>
         <FILE id="eNXEcn" name="Filter.h" compile="0" resource="0" file="Source/Filter.h"/>

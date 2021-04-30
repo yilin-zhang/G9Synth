@@ -112,6 +112,10 @@ void Delay::setDelayTime(float value)
         return;
 
     delaySpec.delayInS = value;
+
+    if (!isInitialized)
+        return;
+
     pDelayLine->setDelay(value * processSpec.sampleRate);
 }
 

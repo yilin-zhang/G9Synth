@@ -29,7 +29,7 @@ G9SynthAudioProcessor::G9SynthAudioProcessor()
                        std::make_unique<juce::AudioParameterFloat>("SawOsc#shiftInCent", "SawOsc#PitchShift", -100.0f, 100.0f, 0.0f),
                        std::make_unique<juce::AudioParameterFloat>("SqrOsc#gain", "SqrOsc#Gain", 0.0f, 1.0f, 0.3f),
                        std::make_unique<juce::AudioParameterFloat>("SqrOsc#shiftInCent", "SqrOsc#PitchShift", -100.0f, 100.0f, 0.0f),
-                       std::make_unique<juce::AudioParameterChoice>("SVF#type", "SqrOsc#Type", juce::StringArray{"Lowpass", "Bandpass", "Highpass"}, 0),
+                       std::make_unique<juce::AudioParameterChoice>("SVF#type", "SVF#Type", juce::StringArray{"Lowpass", "Bandpass", "Highpass"}, 0),
                        std::make_unique<juce::AudioParameterFloat>("SVF#cutoff", "SVF#Cutoff", 50.f, 8000.0f, 1000.f),
                        std::make_unique<juce::AudioParameterFloat>("SVF#res", "SVF#Res", 0.01f, 1.f, 1/sqrt(2.0)),
                        std::make_unique<juce::AudioParameterFloat>("ADSR#attack", "ADSR#Attack", 0.0f, 10.0f, 0.1f),
@@ -148,18 +148,13 @@ void G9SynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     juce::uint32 numChannels = getTotalNumOutputChannels();
 
     svf.initialize({sampleRate, static_cast<juce::uint32>(samplesPerBlock), numChannels});
-    switch (parameters.getParameter("SVF#type")->getParameterIndex())
-    {
-        case 0:
-            svf.setType(StateVariableFilter::Type::lowPass);
-            break;
-        case 1:
-            svf.setType(StateVariableFilter::Type::bandPass);
-            break;
-        case 2:
-            svf.setType(StateVariableFilter::Type::highPass);
-            break;
-    }
+    auto typeString = parameters.getParameter("SVF#type")->getCurrentValueAsText();
+    if (typeString == "Lowpass")
+        svf.setType(StateVariableFilter::Type::lowPass);
+    else if (typeString == "Bandpass")
+        svf.setType(StateVariableFilter::Type::bandPass);
+    else if (typeString == "Highpass")
+        svf.setType(StateVariableFilter::Type::highPass);
     svf.setCutoffFrequency(parameters.getParameterAsValue("SVF#cutoff").getValue());
     svf.setResonance(parameters.getParameterAsValue("SVF#res").getValue());
 
@@ -342,18 +337,14 @@ void G9SynthAudioProcessor::parameterChanged (const juce::String &parameterID, f
     // SVF
     else if (parameterID == "SVF#type")
     {
-        switch (parameters.getParameter("SVF#type")->getParameterIndex())
-        {
-            case 0:
-                svf.setType(StateVariableFilter::Type::lowPass);
-                break;
-            case 1:
-                svf.setType(StateVariableFilter::Type::bandPass);
-                break;
-            case 2:
-                svf.setType(StateVariableFilter::Type::highPass);
-                break;
-        }
+        auto typeString = parameters.getParameter("SVF#type")->getCurrentValueAsText();
+
+        if (typeString == "Lowpass")
+            svf.setType(StateVariableFilter::Type::lowPass);
+        else if (typeString == "Bandpass")
+            svf.setType(StateVariableFilter::Type::bandPass);
+        else if (typeString == "Highpass")
+            svf.setType(StateVariableFilter::Type::highPass);
     }
     else if (parameterID == "SVF#cutoff")
     {
@@ -415,6 +406,11 @@ void G9SynthAudioProcessor::parameterChanged (const juce::String &parameterID, f
     {
         delay.setMix(newValue);
     }
+}
+
+juce::AudioProcessorValueTreeState& G9SynthAudioProcessor::getValueTreeState()
+{
+    return parameters;
 }
 
 //==============================================================================
