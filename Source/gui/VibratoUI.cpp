@@ -22,11 +22,13 @@ mix {juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow}
     setSize(200, 250);
 
     addAndMakeVisible(depth);
+    depth.setTextValueSuffix(" ms");
     depthLabel.setText("Depth", juce::dontSendNotification);
     depthLabel.attachToComponent(&depth, false);
     depthAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(parameters, "Vibrato#depth", depth);
 
     addAndMakeVisible(freq);
+    freq.setTextValueSuffix(" Hz");
     freqLabel.setText("Freq", juce::dontSendNotification);
     freqLabel.attachToComponent(&freq, false);
     freqAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(parameters, "Vibrato#freq", freq);

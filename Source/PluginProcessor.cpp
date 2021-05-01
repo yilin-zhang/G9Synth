@@ -23,31 +23,31 @@ G9SynthAudioProcessor::G9SynthAudioProcessor()
 #endif
        parameters(*this, nullptr, juce::Identifier("G9Synth"),
                   {
-                       std::make_unique<juce::AudioParameterFloat>("SinOsc#gain", "SinOsc#Gain", 0.0f, 1.0f, 0.3f),
+                       std::make_unique<juce::AudioParameterFloat>("SinOsc#gain", "SinOsc#Gain", juce::NormalisableRange<float>(0.f, 1.f, 0.f), 0.3f),
                        std::make_unique<juce::AudioParameterFloat>("SinOsc#shiftInCent", "SinOsc#PitchShift", -100.0f, 100.0f, 0.0f),
-                       std::make_unique<juce::AudioParameterFloat>("SawOsc#gain", "SawOsc#Gain", 0.0f, 1.0f, 0.3f),
+                       std::make_unique<juce::AudioParameterFloat>("SawOsc#gain", "SawOsc#Gain", juce::NormalisableRange<float>(0.f, 1.f, 0.f), 0.3f),
                        std::make_unique<juce::AudioParameterFloat>("SawOsc#shiftInCent", "SawOsc#PitchShift", -100.0f, 100.0f, 0.0f),
-                       std::make_unique<juce::AudioParameterFloat>("SqrOsc#gain", "SqrOsc#Gain", 0.0f, 1.0f, 0.3f),
+                       std::make_unique<juce::AudioParameterFloat>("SqrOsc#gain", "SqrOsc#Gain", juce::NormalisableRange<float>(0.f, 1.f, 0.f), 0.3f),
                        std::make_unique<juce::AudioParameterFloat>("SqrOsc#shiftInCent", "SqrOsc#PitchShift", -100.0f, 100.0f, 0.0f),
-                       std::make_unique<juce::AudioParameterFloat>("Bitcrusher#depth", "Bitcrusher#Depth", 1.f, 32.f, 8.f),
-                       std::make_unique<juce::AudioParameterFloat>("Bitcrusher#freq", "Bitcrusher#Freq", 200.f, 480000.f, 55600.f),
-                       std::make_unique<juce::AudioParameterFloat>("Bitcrusher#mix", "Bitcrusher#Mix", 0.0f, 1.0f, 0.0f),
                        std::make_unique<juce::AudioParameterChoice>("SVF#type", "SVF#Type", juce::StringArray{"Lowpass", "Bandpass", "Highpass"}, 0),
-                       std::make_unique<juce::AudioParameterFloat>("SVF#cutoff", "SVF#Cutoff", 50.f, 8000.0f, 1000.f),
-                       std::make_unique<juce::AudioParameterFloat>("SVF#res", "SVF#Res", 0.01f, 1.f, 1/sqrt(2.0)),
-                       std::make_unique<juce::AudioParameterFloat>("ADSR#attack", "ADSR#Attack", 0.0f, 10.0f, 0.1f),
-                       std::make_unique<juce::AudioParameterFloat>("ADSR#decay", "ADSR#Decay", 0.0f, 10.0f, 0.1f),
-                       std::make_unique<juce::AudioParameterFloat>("ADSR#sustain", "ADSR#Sustain", 0.0f, 1.0f, 1.0f),
-                       std::make_unique<juce::AudioParameterFloat>("ADSR#release", "ADSR#Release", 0.0f, 10.0f, 0.1f),
-                       std::make_unique<juce::AudioParameterFloat>("Vibrato#depth", "Vibrato#Depth", 0.0f, 0.2f, 0.1f),
-                       std::make_unique<juce::AudioParameterFloat>("Vibrato#freq", "Vibrato#Freq", 0.0f, 10.0f, 5.f),
-                       std::make_unique<juce::AudioParameterFloat>("Vibrato#mix", "Vibrato#Mix", 0.0f, 1.0f, 0.0f),
-                       std::make_unique<juce::AudioParameterFloat>("Delay#time", "Delay#Time", 0.0f, 10.0f, 0.5f),
-                       std::make_unique<juce::AudioParameterFloat>("Delay#feedback", "Delay#Feedback", 0.0f, 1.0f, 0.5f),
-                       std::make_unique<juce::AudioParameterFloat>("Delay#mix", "Delay#Mix", 0.0f, 1.0f, 0.0f),
+                       std::make_unique<juce::AudioParameterFloat>("SVF#cutoff", "SVF#Cutoff", juce::NormalisableRange<float>(50.f, 8000.f, 0.f, 0.25f), 1000.f),
+                       std::make_unique<juce::AudioParameterFloat>("SVF#res", "SVF#Res", juce::NormalisableRange<float>(0.01f, 1.f, 0.f), 1/sqrt(2.0)),
+                       std::make_unique<juce::AudioParameterFloat>("ADSR#attack", "ADSR#Attack", juce::NormalisableRange<float>(0.f, 10.f, 0.f, 0.25f), 0.1f),
+                       std::make_unique<juce::AudioParameterFloat>("ADSR#decay", "ADSR#Decay", juce::NormalisableRange<float>(0.f, 10.f, 0.f, 0.25f), 0.1f),
+                       std::make_unique<juce::AudioParameterFloat>("ADSR#sustain", "ADSR#Sustain", juce::NormalisableRange<float>(0.f, 1.f, 0.f), 1.0f),
+                       std::make_unique<juce::AudioParameterFloat>("ADSR#release", "ADSR#Release", juce::NormalisableRange<float>(0.f, 10.f, 0.f, 0.25f), 0.1f),
+                       std::make_unique<juce::AudioParameterFloat>("Vibrato#depth", "Vibrato#Depth", juce::NormalisableRange<float>(0.f, 200.f, 0.f), 100.f),
+                       std::make_unique<juce::AudioParameterFloat>("Vibrato#freq", "Vibrato#Freq", juce::NormalisableRange<float>(0.f, 10.f, 0.f, 0.25f), 5.f),
+                       std::make_unique<juce::AudioParameterFloat>("Vibrato#mix", "Vibrato#Mix", juce::NormalisableRange<float>(0.f, 1.f, 0.f), 0.0f),
+                       std::make_unique<juce::AudioParameterFloat>("Delay#time", "Delay#Time", juce::NormalisableRange<float>(0.f, 10.f, 0.f), 0.5f),
+                       std::make_unique<juce::AudioParameterFloat>("Delay#feedback", "Delay#Feedback", juce::NormalisableRange<float>(0.f, 1.f, 0.f), 0.5f),
+                       std::make_unique<juce::AudioParameterFloat>("Delay#mix", "Delay#Mix", juce::NormalisableRange<float>(0.f, 1.f, 0.f), 0.0f),
                        // TODO: The IR wav path is not stored
                        std::make_unique<juce::AudioParameterBool>("IR#bypassed", "IR#Bypassed", true),
-                       std::make_unique<juce::AudioParameterFloat>("IR#mix", "Delay#Mix", 0.0f, 1.0f, 0.0f),
+                       std::make_unique<juce::AudioParameterFloat>("IR#mix", "Delay#Mix", juce::NormalisableRange<float>(0.f, 1.f, 0.f), 0.0f),
+                       std::make_unique<juce::AudioParameterFloat>("Bitcrusher#depth", "Bitcrusher#Depth", juce::NormalisableRange<float>(1.f, 8.f, 0.f), 8.f),
+                       std::make_unique<juce::AudioParameterFloat>("Bitcrusher#freq", "Bitcrusher#Freq", juce::NormalisableRange<float>(200.f, 480000.f, 0.f, 0.25f), 55600.f),
+                       std::make_unique<juce::AudioParameterFloat>("Bitcrusher#mix", "Bitcrusher#Mix", juce::NormalisableRange<float>(0.f, 1.f, 0.f, 0.25f), 0.0f)
                   })
 {
     parameters.addParameterListener("SinOsc#gain", this);
@@ -152,17 +152,15 @@ void G9SynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
 
     sinWaveTable.initialize(4096); // the wave-table only initializes itself once
     sinOscillator.initialize(&sinWaveTable,0.f, sampleRate);
+    sinOscillator.setGain(pow(static_cast<float>(parameters.getParameterAsValue("SinOsc#gain").getValue()), 2));
 
     sawWaveTable.initialize(4096);
     sawOscillator.initialize(&sawWaveTable,0.f, sampleRate);
+    sawOscillator.setGain(pow(static_cast<float>(parameters.getParameterAsValue("SawOsc#gain").getValue()), 2));
 
     sqrWaveTable.initialize(4096);
     sqrOscillator.initialize(&sqrWaveTable,0.f, sampleRate);
-
-    bitcrusher.initialize(processSpec);
-    bitcrusher.setClockFrequency(parameters.getParameterAsValue("Bitcrusher#freq").getValue());
-    bitcrusher.setBitDepth(parameters.getParameterAsValue("Bitcrusher#depth").getValue());
-    bitcrusher.setMix(parameters.getParameterAsValue("Bitcrusher#mix").getValue());
+    sqrOscillator.setGain(pow(static_cast<float>(parameters.getParameterAsValue("SqrOsc#gain").getValue()), 2));
 
     svf.initialize(processSpec);
     auto typeString = parameters.getParameter("SVF#type")->getCurrentValueAsText();
@@ -196,6 +194,11 @@ void G9SynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     ir.initialize(processSpec);
     ir.setBypass(parameters.getParameterAsValue("IR#bypassed").getValue());
     ir.setMix(parameters.getParameterAsValue("IR#mix").getValue());
+
+    bitcrusher.initialize(processSpec);
+    bitcrusher.setClockFrequency(parameters.getParameterAsValue("Bitcrusher#freq").getValue());
+    bitcrusher.setBitDepth(parameters.getParameterAsValue("Bitcrusher#depth").getValue());
+    bitcrusher.setMix(parameters.getParameterAsValue("Bitcrusher#mix").getValue());
 }
 
 void G9SynthAudioProcessor::releaseResources()
@@ -343,6 +346,7 @@ void G9SynthAudioProcessor::parameterChanged (const juce::String &parameterID, f
     // Oscillators
     if (parameterID == "SinOsc#gain")
     {
+        newValue = pow(newValue, 2);
         sinOscillator.setGain(newValue);
     }
     else if (parameterID == "SinOsc#shiftInCent")
@@ -351,6 +355,7 @@ void G9SynthAudioProcessor::parameterChanged (const juce::String &parameterID, f
     }
     else if (parameterID == "SawOsc#gain")
     {
+        newValue = pow(newValue, 2);
         sawOscillator.setGain(newValue);
     }
     else if (parameterID == "SawOsc#shiftInCent")
@@ -359,6 +364,7 @@ void G9SynthAudioProcessor::parameterChanged (const juce::String &parameterID, f
     }
     else if (parameterID == "SqrOsc#gain")
     {
+        newValue = pow(newValue, 2);
         sqrOscillator.setGain(newValue);
     }
     else if (parameterID == "SqrOsc#shiftInCent")
@@ -427,6 +433,7 @@ void G9SynthAudioProcessor::parameterChanged (const juce::String &parameterID, f
     // Vibrato
     else if (parameterID == "Vibrato#depth")
     {
+        newValue /= 1000; // s -> ms
         vibrato.setDepth(newValue);
     }
     else if (parameterID == "Vibrato#freq")
