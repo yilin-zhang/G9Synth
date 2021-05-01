@@ -24,14 +24,6 @@ public:
      */
     bool initialize(const juce::dsp::ProcessSpec &spec);
 
-    /**
-     * Initializes the ImpulseResponse object
-     * @param spec
-     * @param pathToWav
-     * @return
-     */
-    bool initialize(const juce::dsp::ProcessSpec& spec, const juce::String& pathToWav);
-
     bool getInitialized() const;
 
     bool loadImpulseResponse(const juce::String& pathToWav);

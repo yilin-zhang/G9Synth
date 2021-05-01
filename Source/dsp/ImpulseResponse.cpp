@@ -15,24 +15,17 @@ ImpulseResponse::ImpulseResponse() : isInitialized(false), processSpec({0, 0, 0}
     impulseResponseSpec.isBypassed = true; impulseResponseSpec.mix = 0.f;
 }
 
-ImpulseResponse::~ImpulseResponse() {}
+ImpulseResponse::~ImpulseResponse()
+{
+    reset();
+}
 
 bool ImpulseResponse::initialize(const juce::dsp::ProcessSpec &spec)
 {
     impulseResponseSpec.isBypassed = true;
+    processSpec = spec;
     convolution.prepare(spec);
-    isInitialized = true;
-
-    return true;
-}
-
-bool ImpulseResponse::initialize(const juce::dsp::ProcessSpec &spec, const juce::String &pathToWav)
-{
-    if (!loadImpulseResponse(pathToWav))
-        return false;
-
-    convolution.prepare(spec);
-    impulseResponseSpec.isBypassed = false;
+    dryBuffer.setSize(spec.numChannels, spec.maximumBlockSize);
     isInitialized = true;
 
     return true;
@@ -69,10 +62,10 @@ void ImpulseResponse::reset()
     if (!isInitialized)
         return;
 
+    clear();
+
     processSpec = {0.0, 0, 0};
     impulseResponseSpec.isBypassed = true; impulseResponseSpec.mix = 0.f;
-    // NOTE: will this make convolution prepare again?
-    convolution.reset();
 
     isInitialized = false;
 }
@@ -84,6 +77,7 @@ void ImpulseResponse::clear()
 
     // NOTE: will this make convolution prepare again?
     convolution.reset();
+    dryBuffer.clear();
 }
 
 void ImpulseResponse::process(juce::AudioBuffer<float> &buffer)
@@ -91,9 +85,13 @@ void ImpulseResponse::process(juce::AudioBuffer<float> &buffer)
     if (impulseResponseSpec.isBypassed || !isInitialized)
         return;
 
+    auto numChannels = buffer.getNumChannels();
+    auto numSamples = buffer.getNumSamples();
     float mix = impulseResponseSpec.mix;
 
-    dryBuffer.makeCopyOf(buffer);
+    for (int c = 0; c < numChannels; ++c)
+        dryBuffer.copyFrom(c, 0, buffer, c, 0, numSamples);
+
     juce::dsp::AudioBlock<float> block (buffer);
     juce::dsp::ProcessContextReplacing<float> context (block);
     convolution.process(context);
@@ -101,8 +99,6 @@ void ImpulseResponse::process(juce::AudioBuffer<float> &buffer)
     dryBuffer.applyGain(1.f - mix);
     buffer.applyGain(mix);
 
-    auto numChannels = buffer.getNumChannels();
-    auto numSamples = buffer.getNumSamples();
     for (int c = 0; c < numChannels; ++c)
         buffer.addFrom(c, 0, dryBuffer, c, 0, numSamples);
 }

@@ -29,6 +29,9 @@ G9SynthAudioProcessor::G9SynthAudioProcessor()
                        std::make_unique<juce::AudioParameterFloat>("SawOsc#shiftInCent", "SawOsc#PitchShift", -100.0f, 100.0f, 0.0f),
                        std::make_unique<juce::AudioParameterFloat>("SqrOsc#gain", "SqrOsc#Gain", 0.0f, 1.0f, 0.3f),
                        std::make_unique<juce::AudioParameterFloat>("SqrOsc#shiftInCent", "SqrOsc#PitchShift", -100.0f, 100.0f, 0.0f),
+                       std::make_unique<juce::AudioParameterFloat>("Bitcrusher#depth", "Bitcrusher#Depth", 1.f, 32.f, 8.f),
+                       std::make_unique<juce::AudioParameterFloat>("Bitcrusher#freq", "Bitcrusher#Freq", 200.f, 480000.f, 55600.f),
+                       std::make_unique<juce::AudioParameterFloat>("Bitcrusher#mix", "Bitcrusher#Mix", 0.0f, 1.0f, 0.0f),
                        std::make_unique<juce::AudioParameterChoice>("SVF#type", "SVF#Type", juce::StringArray{"Lowpass", "Bandpass", "Highpass"}, 0),
                        std::make_unique<juce::AudioParameterFloat>("SVF#cutoff", "SVF#Cutoff", 50.f, 8000.0f, 1000.f),
                        std::make_unique<juce::AudioParameterFloat>("SVF#res", "SVF#Res", 0.01f, 1.f, 1/sqrt(2.0)),
@@ -53,6 +56,9 @@ G9SynthAudioProcessor::G9SynthAudioProcessor()
     parameters.addParameterListener("SawOsc#shiftInCent", this);
     parameters.addParameterListener("SqrOsc#gain", this);
     parameters.addParameterListener("SqrOsc#shiftInCent", this);
+    parameters.addParameterListener("Bitcrusher#depth", this);
+    parameters.addParameterListener("Bitcrusher#freq", this);
+    parameters.addParameterListener("Bitcrusher#mix", this);
     parameters.addParameterListener("SVF#type", this);
     parameters.addParameterListener("SVF#cutoff", this);
     parameters.addParameterListener("SVF#res", this);
@@ -141,6 +147,9 @@ void G9SynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+    juce::uint32 numChannels = getTotalNumOutputChannels();
+    processSpec = {sampleRate, static_cast<juce::uint32>(samplesPerBlock), numChannels};
+
     sinWaveTable.initialize(4096); // the wave-table only initializes itself once
     sinOscillator.initialize(&sinWaveTable,0.f, sampleRate);
 
@@ -150,9 +159,12 @@ void G9SynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     sqrWaveTable.initialize(4096);
     sqrOscillator.initialize(&sqrWaveTable,0.f, sampleRate);
 
-    juce::uint32 numChannels = getTotalNumOutputChannels();
+    bitcrusher.initialize(processSpec);
+    bitcrusher.setClockFrequency(parameters.getParameterAsValue("Bitcrusher#freq").getValue());
+    bitcrusher.setBitDepth(parameters.getParameterAsValue("Bitcrusher#depth").getValue());
+    bitcrusher.setMix(parameters.getParameterAsValue("Bitcrusher#mix").getValue());
 
-    svf.initialize({sampleRate, static_cast<juce::uint32>(samplesPerBlock), numChannels});
+    svf.initialize(processSpec);
     auto typeString = parameters.getParameter("SVF#type")->getCurrentValueAsText();
     if (typeString == "Lowpass")
         svf.setType(StateVariableFilter::Type::lowPass);
@@ -171,17 +183,17 @@ void G9SynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
                     parameters.getParameterAsValue("ADSR#release").getValue(),
             });
 
-    vibrato.initialize({sampleRate, static_cast<juce::uint32>(samplesPerBlock), numChannels}, 0.2);
+    vibrato.initialize(processSpec, 0.2);
     vibrato.setDepth(parameters.getParameterAsValue("Vibrato#depth").getValue());
     vibrato.setFrequency(parameters.getParameterAsValue("Vibrato#freq").getValue());
     vibrato.setMix(parameters.getParameterAsValue("Vibrato#mix").getValue());
 
-    delay.initialize({sampleRate, static_cast<juce::uint32>(samplesPerBlock), numChannels}, 10);
+    delay.initialize(processSpec, 10);
     delay.setDelayTime(parameters.getParameterAsValue("Delay#time").getValue());
     delay.setFeedback(parameters.getParameterAsValue("Delay#feedback").getValue());
     delay.setMix(parameters.getParameterAsValue("Delay#mix").getValue());
 
-    ir.initialize({sampleRate, static_cast<juce::uint32>(samplesPerBlock), numChannels});
+    ir.initialize(processSpec);
     ir.setBypass(parameters.getParameterAsValue("IR#bypassed").getValue());
     ir.setMix(parameters.getParameterAsValue("IR#mix").getValue());
 }
@@ -193,11 +205,14 @@ void G9SynthAudioProcessor::releaseResources()
     sinOscillator.reset();
     sawOscillator.reset();
     sqrOscillator.reset();
+    bitcrusher.reset();
     vibrato.reset();
     svf.reset();
     adsr.reset();
     delay.reset();
     ir.reset();
+
+    processSpec = {0.0, 0, 0};
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -271,19 +286,23 @@ void G9SynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
             pp[c][i] = val;
     }
 
-    svf.process(buffer);
+    // split the buffer into smaller ones if it's larger than the expected size
+    int startSample = 0;
+    while (startSample < blockSize - 1)
+    {
+        int smallerSize = blockSize - startSample <= processSpec.maximumBlockSize ?
+                          blockSize : processSpec.maximumBlockSize;
+        juce::AudioBuffer<float> smallerBuffer (pp, numChannels, startSample, smallerSize);
 
-    // ADSR
-    adsr.applyEnvelopeToBuffer(buffer, 0, blockSize);
+        svf.process(smallerBuffer);
+        adsr.applyEnvelopeToBuffer(smallerBuffer, 0, blockSize);
+        vibrato.process(smallerBuffer);
+        delay.process(smallerBuffer);
+        ir.process(smallerBuffer);
+        bitcrusher.process(smallerBuffer);
 
-    // Vibrato
-    vibrato.process(buffer);
-
-    // Delay
-    delay.process(buffer);
-
-    // IR
-    ir.process(buffer);
+        startSample += smallerSize;
+    }
 }
 
 //==============================================================================
@@ -346,7 +365,19 @@ void G9SynthAudioProcessor::parameterChanged (const juce::String &parameterID, f
     {
         sqrOscillator.shiftPitch(newValue);
     }
-
+    // Bitcrusher
+    else if (parameterID == "Bitcrusher#depth")
+    {
+        bitcrusher.setBitDepth(newValue);
+    }
+    else if (parameterID == "Bitcrusher#freq")
+    {
+        bitcrusher.setClockFrequency(newValue);
+    }
+    else if (parameterID == "Bitcrusher#mix")
+    {
+        bitcrusher.setMix(newValue);
+    }
     // SVF
     else if (parameterID == "SVF#type")
     {

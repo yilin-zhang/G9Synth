@@ -17,6 +17,7 @@
 #include "gui/VibratoUI.h"
 #include "gui/DelayUI.h"
 #include "gui/ImpulseResponseUI.h"
+#include "gui/BitcrusherUI.h"
 
 //==============================================================================
 /**
@@ -43,6 +44,7 @@ private:
     VibratoUI vibratoUI;
     DelayUI delayUI;
     ImpulseResponseUI irUI;
+    BitcrusherUI bitcrusherUI;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (G9SynthAudioProcessorEditor)
 };

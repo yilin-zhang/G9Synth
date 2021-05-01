@@ -6,6 +6,9 @@
   <MAINGROUP id="yvM98K" name="G9Synth">
     <GROUP id="{1CFBD44A-1F54-A445-141B-951F1D8E43F4}" name="Source">
       <GROUP id="{C29126DD-9E22-940E-E30B-B7F4211CC87B}" name="gui">
+        <FILE id="ugE0Oa" name="BitcrusherUI.cpp" compile="1" resource="0"
+              file="Source/gui/BitcrusherUI.cpp"/>
+        <FILE id="Rhwcll" name="BitcrusherUI.h" compile="0" resource="0" file="Source/gui/BitcrusherUI.h"/>
         <FILE id="dUS3x5" name="DelayUI.cpp" compile="1" resource="0" file="Source/gui/DelayUI.cpp"/>
         <FILE id="UPLxtF" name="DelayUI.h" compile="0" resource="0" file="Source/gui/DelayUI.h"/>
         <FILE id="mrdsYc" name="EnvUI.cpp" compile="1" resource="0" file="Source/gui/EnvUI.cpp"/>
@@ -33,6 +36,8 @@
               file="Source/dsp/ImpulseResponse.h"/>
         <FILE id="I4FvPj" name="Oscillator.cpp" compile="1" resource="0" file="Source/dsp/Oscillator.cpp"/>
         <FILE id="PatN3Z" name="Oscillator.h" compile="0" resource="0" file="Source/dsp/Oscillator.h"/>
+        <FILE id="zo3igp" name="Bitcrusher.cpp" compile="1" resource="0" file="Source/dsp/Bitcrusher.cpp"/>
+        <FILE id="nadkvz" name="Bitcrusher.h" compile="0" resource="0" file="Source/dsp/Bitcrusher.h"/>
         <FILE id="a0S1Fw" name="RingBuffer.h" compile="0" resource="0" file="Source/dsp/RingBuffer.h"/>
         <FILE id="oWVKVV" name="Vibrato.cpp" compile="1" resource="0" file="Source/dsp/Vibrato.cpp"/>
         <FILE id="ehFYLv" name="Vibrato.h" compile="0" resource="0" file="Source/dsp/Vibrato.h"/>

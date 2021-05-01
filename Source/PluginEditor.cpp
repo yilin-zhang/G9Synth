@@ -12,12 +12,13 @@
 //==============================================================================
 G9SynthAudioProcessorEditor::G9SynthAudioProcessorEditor (G9SynthAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p), parameters(p.getValueTreeState()),
-      oscillatorUI(p), filterUI(p), envUI(p), vibratoUI(p), delayUI(p), irUI(p)
+      oscillatorUI(p), filterUI(p), envUI(p), vibratoUI(p), delayUI(p), irUI(p), bitcrusherUI(p)
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
     setResizable(false, false);
-    setSize (oscillatorUI.getWidth()+filterUI.getWidth()+envUI.getWidth(), oscillatorUI.getHeight()+vibratoUI.getHeight());
+    setSize (vibratoUI.getWidth()+delayUI.getWidth()+irUI.getWidth()+bitcrusherUI.getWidth(),
+             oscillatorUI.getHeight()+vibratoUI.getHeight());
 
     addAndMakeVisible(oscillatorUI);
     addAndMakeVisible(filterUI);
@@ -25,6 +26,7 @@ G9SynthAudioProcessorEditor::G9SynthAudioProcessorEditor (G9SynthAudioProcessor&
     addAndMakeVisible(vibratoUI);
     addAndMakeVisible(delayUI);
     addAndMakeVisible(irUI);
+    addAndMakeVisible(bitcrusherUI);
 }
 
 G9SynthAudioProcessorEditor::~G9SynthAudioProcessorEditor()
@@ -56,4 +58,5 @@ void G9SynthAudioProcessorEditor::resized()
     vibratoUI.setBounds(0, oscillatorUI.getHeight(), vibratoUI.getWidth(), vibratoUI.getHeight());
     delayUI.setBounds(vibratoUI.getWidth(), oscillatorUI.getHeight(), delayUI.getWidth(), delayUI.getHeight());
     irUI.setBounds(vibratoUI.getWidth()+delayUI.getWidth(), oscillatorUI.getHeight(), irUI.getWidth(), irUI.getHeight());
+    bitcrusherUI.setBounds(vibratoUI.getWidth()+delayUI.getWidth()+irUI.getWidth(), oscillatorUI.getHeight(), bitcrusherUI.getWidth(), bitcrusherUI.getHeight());
 }

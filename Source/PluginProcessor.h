@@ -14,6 +14,7 @@
 #include "dsp/Delay.h"
 #include "dsp/Vibrato.h"
 #include "dsp/ImpulseResponse.h"
+#include "dsp/Bitcrusher.h"
 
 //==============================================================================
 /**
@@ -68,6 +69,7 @@ public:
 
 private:
     juce::AudioProcessorValueTreeState parameters;
+    juce::dsp::ProcessSpec processSpec;
 
     SinWaveTable sinWaveTable;
     WaveTableOscillator sinOscillator;
@@ -77,6 +79,7 @@ private:
     WaveTableOscillator sqrOscillator;
 
     Vibrato vibrato;
+    Bitcrusher bitcrusher;
     StateVariableFilter svf;
     juce::ADSR adsr;
     Delay delay;
