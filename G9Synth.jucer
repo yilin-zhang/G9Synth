@@ -26,6 +26,8 @@
         <FILE id="O3LwYy" name="VibratoUI.h" compile="0" resource="0" file="Source/gui/VibratoUI.h"/>
       </GROUP>
       <GROUP id="{D24F9C64-0E56-B526-6114-55B05A8258DF}" name="dsp">
+        <FILE id="oCUGDQ" name="RingMod.cpp" compile="1" resource="0" file="Source/dsp/RingMod.cpp"/>
+        <FILE id="c1Bb9p" name="RingMod.h" compile="0" resource="0" file="Source/dsp/RingMod.h"/>
         <FILE id="Hr4Czq" name="Delay.cpp" compile="1" resource="0" file="Source/dsp/Delay.cpp"/>
         <FILE id="QxcuJz" name="Delay.h" compile="0" resource="0" file="Source/dsp/Delay.h"/>
         <FILE id="TjeEAr" name="Filter.cpp" compile="1" resource="0" file="Source/dsp/Filter.cpp"/>

@@ -306,6 +306,7 @@ void G9SynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
                           blockSize : processSpec.maximumBlockSize;
         juce::AudioBuffer<float> smallerBuffer (pp, numChannels, startSample, smallerSize);
 
+        ringmod.process(smallerBuffer);
         svf.process(smallerBuffer);
         adsr.applyEnvelopeToBuffer(smallerBuffer, 0, blockSize);
         vibrato.process(smallerBuffer);

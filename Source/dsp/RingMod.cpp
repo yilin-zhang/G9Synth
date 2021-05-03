@@ -28,7 +28,10 @@ bool RingMod::initialize(const juce::dsp::ProcessSpec &spec)
     // initialize the LFO
     sinWaveTable.initialize(4096); // the wave-table only initializes itself once
     lfo.initialize(&sinWaveTable, ringmodSpec.freqInHz, spec.sampleRate);
+    lfo.setGain(1.f);
+    isInitialized = true;
 
+    return true;
 }
 
 void RingMod::process(juce::AudioBuffer<float> &buffer)
@@ -38,6 +41,7 @@ void RingMod::process(juce::AudioBuffer<float> &buffer)
 
     auto ppBuffer = buffer.getArrayOfWritePointers();
     auto bufferSize = buffer.getNumSamples();
+    auto numChannels = buffer.getNumChannels();
 
     float fOffset, freqInHz, mix;
     for (int i = 0; i < bufferSize; ++i)
@@ -46,9 +50,9 @@ void RingMod::process(juce::AudioBuffer<float> &buffer)
         freqInHz = ringmodSpec.freqInHz;
         mix = ringmodSpec.mix;
         // update parameters
-        fOffset = lfo.getNextSample();
         lfo.setFrequency(freqInHz);
-        for (int c = 0; c < processSpec.numChannels; ++c)
+        fOffset = lfo.getNextSample();
+        for (int c = 0; c < numChannels; ++c)
         {
             auto dry = ppBuffer[c][i];
             auto wet = ppBuffer[c][i] * fOffset;
