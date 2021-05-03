@@ -17,7 +17,7 @@ G9SynthAudioProcessorEditor::G9SynthAudioProcessorEditor (G9SynthAudioProcessor&
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
     setResizable(false, false);
-    setSize (vibratoUI.getWidth()+delayUI.getWidth()+irUI.getWidth()+bitcrusherUI.getWidth(),
+    setSize (oscillatorUI.getWidth()+filterUI.getWidth()+envUI.getWidth(),
              oscillatorUI.getHeight()+vibratoUI.getHeight());
 
     addAndMakeVisible(oscillatorUI);

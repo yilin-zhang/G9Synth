@@ -18,9 +18,11 @@ sinShiftInCent {juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow},
 sawGain {juce::Slider::LinearVertical, juce::Slider::TextBoxBelow},
 sawShiftInCent {juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow},
 sqrGain {juce::Slider::LinearVertical, juce::Slider::TextBoxBelow},
-sqrShiftInCent {juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow}
+sqrShiftInCent {juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow},
+modFreq {juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow},
+modMix {juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow}
 {
-    setSize(225, 250);
+    setSize(300, 250);
 
     addAndMakeVisible(sinGain);
     sinGainLabel.setText("Sine", juce::dontSendNotification);
@@ -54,6 +56,16 @@ sqrShiftInCent {juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow}
     sqrShiftInCentLabel.setText("Pitch Shift", juce::dontSendNotification);
     sqrShiftInCentLabel.attachToComponent(&sqrShiftInCent, false);
     sqrShiftInCentAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(parameters, "SqrOsc#shiftInCent", sqrShiftInCent);
+
+    addAndMakeVisible(modFreq);
+    modFreqLabel.setText("Mod", juce::dontSendNotification);
+    modFreqLabel.attachToComponent(&modFreq, false);
+    modFreqAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(parameters, "RingMod#freq", modFreq);
+
+    addAndMakeVisible(modMix);
+    modMixLabel.setText("Mix", juce::dontSendNotification);
+    modMixLabel.attachToComponent(&modMix, false);
+    modMixAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(parameters, "RingMod#mix", modMix);
 }
 
 OscillatorUI::~OscillatorUI() = default;
@@ -82,4 +94,7 @@ void OscillatorUI::resized()
     sinShiftInCent.setBounds(7, 70+barSize.getHeight(), knobSize.getWidth(), knobSize.getHeight());
     sawShiftInCent.setBounds(7 + (20+barSize.getWidth()), 70+barSize.getHeight(), knobSize.getWidth(), knobSize.getHeight());
     sqrShiftInCent.setBounds(7 + 2*(20+barSize.getWidth()), 70+barSize.getHeight(), knobSize.getWidth(), knobSize.getHeight());
+
+    modFreq.setBounds(15 + 3 * (20+barSize.getWidth()), 45, knobSize.getWidth(), knobSize.getHeight());
+    modMix.setBounds(7 + 3 * (20+barSize.getWidth()), 70+barSize.getHeight(), knobSize.getWidth(), knobSize.getHeight());
 }

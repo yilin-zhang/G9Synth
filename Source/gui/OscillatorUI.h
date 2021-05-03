@@ -52,5 +52,13 @@ private:
     juce::Label sqrShiftInCentLabel;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sqrShiftInCentAttachment;
 
+    // RingMod
+    juce::Slider modFreq;
+    juce::Label modFreqLabel;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> modFreqAttachment;
+
+    juce::Slider modMix;
+    juce::Label modMixLabel;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> modMixAttachment;
 
 };
