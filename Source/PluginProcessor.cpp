@@ -29,6 +29,8 @@ G9SynthAudioProcessor::G9SynthAudioProcessor()
                        std::make_unique<juce::AudioParameterFloat>("SawOsc#shiftInCent", "SawOsc#PitchShift", -100.0f, 100.0f, 0.0f),
                        std::make_unique<juce::AudioParameterFloat>("SqrOsc#gain", "SqrOsc#Gain", juce::NormalisableRange<float>(0.f, 1.f, 0.f), 0.3f),
                        std::make_unique<juce::AudioParameterFloat>("SqrOsc#shiftInCent", "SqrOsc#PitchShift", -100.0f, 100.0f, 0.0f),
+                       std::make_unique<juce::AudioParameterFloat>("RingMod#freq", "RingMod#Freq", juce::NormalisableRange<float>(0.f, 2000.f, 0.f, 0.25f), 500.f),
+                       std::make_unique<juce::AudioParameterFloat>("RingMod#mix", "RingMod#Mix", juce::NormalisableRange<float>(0.f, 1.f, 0.f), 0.0f),
                        std::make_unique<juce::AudioParameterChoice>("SVF#type", "SVF#Type", juce::StringArray{"Lowpass", "Bandpass", "Highpass"}, 0),
                        std::make_unique<juce::AudioParameterFloat>("SVF#cutoff", "SVF#Cutoff", juce::NormalisableRange<float>(50.f, 8000.f, 0.f, 0.25f), 1000.f),
                        std::make_unique<juce::AudioParameterFloat>("SVF#res", "SVF#Res", juce::NormalisableRange<float>(0.01f, 1.f, 0.f), 1/sqrt(2.0)),
@@ -56,6 +58,8 @@ G9SynthAudioProcessor::G9SynthAudioProcessor()
     parameters.addParameterListener("SawOsc#shiftInCent", this);
     parameters.addParameterListener("SqrOsc#gain", this);
     parameters.addParameterListener("SqrOsc#shiftInCent", this);
+    parameters.addParameterListener("RingMod#freq", this);
+    parameters.addParameterListener("RingMod#mix", this);
     parameters.addParameterListener("Bitcrusher#depth", this);
     parameters.addParameterListener("Bitcrusher#freq", this);
     parameters.addParameterListener("Bitcrusher#mix", this);
@@ -162,6 +166,10 @@ void G9SynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     sqrOscillator.initialize(&sqrWaveTable,0.f, sampleRate);
     sqrOscillator.setGain(pow(static_cast<float>(parameters.getParameterAsValue("SqrOsc#gain").getValue()), 2));
 
+    ringmod.initialize(processSpec);
+    ringmod.setFrequency(parameters.getParameterAsValue("RingMod#freq").getValue());
+    ringmod.setMix(parameters.getParameterAsValue("RingMod#mix").getValue());
+
     svf.initialize(processSpec);
     auto typeString = parameters.getParameter("SVF#type")->getCurrentValueAsText();
     if (typeString == "Lowpass")
@@ -208,6 +216,7 @@ void G9SynthAudioProcessor::releaseResources()
     sinOscillator.reset();
     sawOscillator.reset();
     sqrOscillator.reset();
+    ringmod.reset();
     bitcrusher.reset();
     vibrato.reset();
     svf.reset();
@@ -370,6 +379,15 @@ void G9SynthAudioProcessor::parameterChanged (const juce::String &parameterID, f
     else if (parameterID == "SqrOsc#shiftInCent")
     {
         sqrOscillator.shiftPitch(newValue);
+    }
+    // RingMod
+    else if (parameterID == "RingMod#freq")
+    {
+        ringmod.setFrequency(newValue);
+    }
+    else if (parameterID == "RingMod#mix")
+    {
+        ringmod.setMix(newValue);
     }
     // Bitcrusher
     else if (parameterID == "Bitcrusher#depth")

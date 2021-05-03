@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "dsp/Oscillator.h"
+#include "dsp/RingMod.h"
 #include "dsp/Filter.h"
 #include "dsp/Delay.h"
 #include "dsp/Vibrato.h"
@@ -78,6 +79,7 @@ private:
     SqrWaveTable sqrWaveTable;
     WaveTableOscillator sqrOscillator;
 
+    RingMod ringmod;
     Vibrato vibrato;
     Bitcrusher bitcrusher;
     StateVariableFilter svf;
