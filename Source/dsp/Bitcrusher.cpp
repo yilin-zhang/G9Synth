@@ -13,7 +13,8 @@
 Bitcrusher::Bitcrusher() : SynthModule(),
 ppDownSampleInterp(nullptr), ppHoldInterp(nullptr)
 {
-    bitcrusherSpec.freqInHz = 0.f; bitcrusherSpec.bitDepth = 0.f; bitcrusherSpec.mix = 0.f;
+    bitcrusherSpec.freqInHz = 0.f; bitcrusherSpec.bitDepth = 0.f;
+    bitcrusherSpec.isDithering = false; bitcrusherSpec.mix = 0.f;
 }
 
 Bitcrusher::~Bitcrusher()
@@ -54,7 +55,8 @@ void Bitcrusher::reset()
     delete[] ppHoldInterp; ppHoldInterp = nullptr;
 
     processSpec = {0.0, 0, 0};
-    bitcrusherSpec.freqInHz = 0.f; bitcrusherSpec.bitDepth = 0.f; bitcrusherSpec.mix = 0.f;
+    bitcrusherSpec.freqInHz = 0.f; bitcrusherSpec.bitDepth = 0.f;
+    bitcrusherSpec.isDithering = false; bitcrusherSpec.mix = 0.f;
     isInitialized = false;
 }
 
@@ -98,11 +100,17 @@ void Bitcrusher::process(juce::AudioBuffer<float> &buffer)
 
     // 2. quantization fx
     float amp;
+    bool isDithering = bitcrusherSpec.isDithering;
+    float noise;
     for (int i=0; i<numSamples; ++i)
     {
+        if (isDithering)
+            noise = ((rand.nextFloat() + rand.nextFloat()) - 1.f) / 0.5f;
+        else
+            noise = 0;
         amp = std::pow(2.f, bitcrusherSpec.bitDepth-1.f);
         for (int c=0; c<numChannels; ++c)
-            ppBuffer[c][i] = round(ppBuffer[c][i] * amp) / amp;
+            ppBuffer[c][i] = round(ppBuffer[c][i] * amp + noise) / amp;
     }
 
     // 3. mix dry and wet
@@ -143,6 +151,19 @@ void Bitcrusher::setBitDepth(float depth)
 float Bitcrusher::getBitDepth() const
 {
     return bitcrusherSpec.bitDepth;
+}
+
+void Bitcrusher::setDither(bool isDithering)
+{
+    if (!isInitialized)
+        return;
+
+    bitcrusherSpec.isDithering = isDithering;
+}
+
+bool Bitcrusher::getDither() const
+{
+    return bitcrusherSpec.isDithering;
 }
 
 void Bitcrusher::setMix(float value)

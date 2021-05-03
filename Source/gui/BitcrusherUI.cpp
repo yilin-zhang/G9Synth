@@ -35,6 +35,12 @@ BitcrusherUI::BitcrusherUI(G9SynthAudioProcessor& p) : processor(p), parameters(
     mixLabel.setText("Mix", juce::dontSendNotification);
     mixLabel.attachToComponent(&mix, false);
     mixAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(parameters, "Bitcrusher#mix", mix);
+
+    addAndMakeVisible(dither);
+    dither.setToggleState(false, juce::dontSendNotification);
+    ditherLabel.setText("Dither", juce::dontSendNotification);
+    ditherLabel.attachToComponent(&dither, false);
+    ditherAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(parameters, "Bitcrusher#dither", dither);
 }
 
 BitcrusherUI::~BitcrusherUI() = default;
@@ -58,8 +64,10 @@ void BitcrusherUI::resized()
     // This method is where you should set the bounds of any child
     // components that your component contains..
     juce::Rectangle<int> knobSize (0, 0, 80, 80);
+    juce::Rectangle<int> toggleSize (0, 0, 50, 20);
 
     freq.setBounds(25, 45, knobSize.getWidth(), knobSize.getHeight());
     depth.setBounds(25 + knobSize.getWidth(), 45, knobSize.getWidth(), knobSize.getHeight());
     mix.setBounds(55, 45+(30+knobSize.getHeight()), knobSize.getWidth(), knobSize.getHeight());
+    dither.setBounds(150, 150, toggleSize.getWidth(), toggleSize.getHeight());
 }

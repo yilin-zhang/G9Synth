@@ -48,6 +48,18 @@ public:
     float getBitDepth() const;
 
     /**
+     * Sets if the dithering is on
+     * @param isDithering
+     */
+    void setDither(bool isDithering);
+
+    /**
+     * Returns true if dithering is on
+     * @return
+     */
+    bool getDither() const;
+
+    /**
      * Sets the FX mix
      * @param value
      */
@@ -62,11 +74,13 @@ public:
 private:
     struct BitcrusherSpec
     {
-        std::atomic<float> freqInHz; std::atomic<float> bitDepth; std::atomic<float> mix;
+        std::atomic<float> freqInHz; std::atomic<float> bitDepth; std::atomic<bool> isDithering; std::atomic<float> mix;
     } bitcrusherSpec;
 
     juce::AudioBuffer<float> dryBuffer;
     juce::AudioBuffer<float> interpBuffer;
+
+    juce::Random rand;
 
     juce::CatmullRomInterpolator** ppDownSampleInterp;
     juce::ZeroOrderHoldInterpolator** ppHoldInterp;

@@ -41,5 +41,9 @@ private:
     juce::Label mixLabel;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> mixAttachment;
 
+    juce::ToggleButton dither;
+    juce::Label ditherLabel;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> ditherAttachment;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BitcrusherUI)
 };

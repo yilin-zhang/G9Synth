@@ -50,7 +50,8 @@ G9SynthAudioProcessor::G9SynthAudioProcessor()
                        std::make_unique<juce::AudioParameterFloat>("IR#mix", "Delay#Mix", juce::NormalisableRange<float>(0.f, 1.f, 0.f), 0.0f),
                        std::make_unique<juce::AudioParameterFloat>("Bitcrusher#depth", "Bitcrusher#Depth", juce::NormalisableRange<float>(2.f, 8.f, 0.f), 8.f),
                        std::make_unique<juce::AudioParameterFloat>("Bitcrusher#freq", "Bitcrusher#Freq", juce::NormalisableRange<float>(200.f, 480000.f, 0.f, 0.25f), 55600.f),
-                       std::make_unique<juce::AudioParameterFloat>("Bitcrusher#mix", "Bitcrusher#Mix", juce::NormalisableRange<float>(0.f, 1.f, 0.f, 0.25f), 0.0f)
+                       std::make_unique<juce::AudioParameterFloat>("Bitcrusher#mix", "Bitcrusher#Mix", juce::NormalisableRange<float>(0.f, 1.f, 0.f, 0.25f), 0.0f),
+                       std::make_unique<juce::AudioParameterBool>("Bitcrusher#dither", "Bitcrusher#Dither", false)
                   })
 {
     parameters.addParameterListener("SinOsc#gain", this);
@@ -64,6 +65,7 @@ G9SynthAudioProcessor::G9SynthAudioProcessor()
     parameters.addParameterListener("Bitcrusher#depth", this);
     parameters.addParameterListener("Bitcrusher#freq", this);
     parameters.addParameterListener("Bitcrusher#mix", this);
+    parameters.addParameterListener("Bitcrusher#dither", this);
     parameters.addParameterListener("SVF#type", this);
     parameters.addParameterListener("SVF#cutoff", this);
     parameters.addParameterListener("SVF#res", this);
@@ -210,6 +212,7 @@ void G9SynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     bitcrusher.setClockFrequency(parameters.getParameterAsValue("Bitcrusher#freq").getValue());
     bitcrusher.setBitDepth(parameters.getParameterAsValue("Bitcrusher#depth").getValue());
     bitcrusher.setMix(parameters.getParameterAsValue("Bitcrusher#mix").getValue());
+    bitcrusher.setDither(parameters.getParameterAsValue("Bitcrusher#dither").getValue());
 }
 
 void G9SynthAudioProcessor::releaseResources()
@@ -405,6 +408,10 @@ void G9SynthAudioProcessor::parameterChanged (const juce::String &parameterID, f
     else if (parameterID == "Bitcrusher#mix")
     {
         bitcrusher.setMix(newValue);
+    }
+    else if (parameterID == "Bitcrusher#dither")
+    {
+        bitcrusher.setDither(newValue);
     }
     // SVF
     else if (parameterID == "SVF#type")
