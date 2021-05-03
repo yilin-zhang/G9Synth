@@ -37,10 +37,17 @@ public:
     void setResonance(float res);
     float getResonance() const;
 
+    void setBypass(bool isBypassed);
+    bool getBypass() const;
+
     void process(juce::AudioBuffer<float>& buffer);
 
 private:
     bool isInitialized;
     juce::dsp::ProcessSpec processSpec;
+    struct StateVariableFilterSpec
+    {
+        std::atomic<bool> isBypassed;
+    } svfSpec;
     juce::dsp::StateVariableTPTFilter<float> *pSVF;
 };

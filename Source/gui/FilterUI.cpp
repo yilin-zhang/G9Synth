@@ -37,6 +37,12 @@ res {juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow}
     resLabel.setText("Res", juce::dontSendNotification);
     resLabel.attachToComponent(&res, false);
     resAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(parameters, "SVF#res", res);
+
+    addAndMakeVisible(bypassed);
+    bypassed.setToggleState(false, juce::dontSendNotification);
+    bypassedLabel.setText("Bypass", juce::dontSendNotification);
+    bypassedLabel.attachToComponent(&bypassed, false);
+    bypassedAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(parameters, "SVF#bypassed", bypassed);
 }
 
 FilterUI::~FilterUI() = default;
@@ -57,9 +63,10 @@ void FilterUI::resized()
 {
     juce::Rectangle<int> cutoffSize (0, 0, 100, 100);
     juce::Rectangle<int> resSize (0, 0, 70, 70);
+    juce::Rectangle<int> toggleSize (0, 0, 50, 20);
 
     filterType.setBounds(45, 45, 120, 30);
-
+    bypassed.setBounds(20, 45, toggleSize.getWidth(), toggleSize.getHeight());
     cutoff.setBounds(20, 120, cutoffSize.getWidth(), cutoffSize.getHeight());
     res.setBounds(120, 130, resSize.getWidth(), resSize.getHeight());
 }

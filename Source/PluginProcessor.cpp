@@ -34,6 +34,7 @@ G9SynthAudioProcessor::G9SynthAudioProcessor()
                        std::make_unique<juce::AudioParameterChoice>("SVF#type", "SVF#Type", juce::StringArray{"Lowpass", "Bandpass", "Highpass"}, 0),
                        std::make_unique<juce::AudioParameterFloat>("SVF#cutoff", "SVF#Cutoff", juce::NormalisableRange<float>(50.f, 8000.f, 0.f, 0.25f), 1000.f),
                        std::make_unique<juce::AudioParameterFloat>("SVF#res", "SVF#Res", juce::NormalisableRange<float>(0.01f, 1.f, 0.f), 1/sqrt(2.0)),
+                       std::make_unique<juce::AudioParameterBool>("SVF#bypassed", "SVF#Bypassed", false),
                        std::make_unique<juce::AudioParameterFloat>("ADSR#attack", "ADSR#Attack", juce::NormalisableRange<float>(0.f, 10.f, 0.f, 0.25f), 0.1f),
                        std::make_unique<juce::AudioParameterFloat>("ADSR#decay", "ADSR#Decay", juce::NormalisableRange<float>(0.f, 10.f, 0.f, 0.25f), 0.1f),
                        std::make_unique<juce::AudioParameterFloat>("ADSR#sustain", "ADSR#Sustain", juce::NormalisableRange<float>(0.f, 1.f, 0.f), 1.0f),
@@ -66,6 +67,7 @@ G9SynthAudioProcessor::G9SynthAudioProcessor()
     parameters.addParameterListener("SVF#type", this);
     parameters.addParameterListener("SVF#cutoff", this);
     parameters.addParameterListener("SVF#res", this);
+    parameters.addParameterListener("SVF#bypassed", this);
     parameters.addParameterListener("ADSR#attack", this);
     parameters.addParameterListener("ADSR#decay", this);
     parameters.addParameterListener("ADSR#sustain", this);
@@ -180,6 +182,7 @@ void G9SynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
         svf.setType(StateVariableFilter::Type::highPass);
     svf.setCutoffFrequency(parameters.getParameterAsValue("SVF#cutoff").getValue());
     svf.setResonance(parameters.getParameterAsValue("SVF#res").getValue());
+    svf.setBypass(parameters.getParameterAsValue("SVF#bypassed").getValue());
 
     adsr.setSampleRate(sampleRate);
     adsr.setParameters({
@@ -423,7 +426,10 @@ void G9SynthAudioProcessor::parameterChanged (const juce::String &parameterID, f
     {
         svf.setResonance(newValue);
     }
-
+    else if (parameterID == "SVF#bypassed")
+    {
+        svf.setBypass(static_cast<bool>(newValue));
+    }
     // ADSR
     else if (parameterID == "ADSR#attack")
     {
@@ -479,7 +485,6 @@ void G9SynthAudioProcessor::parameterChanged (const juce::String &parameterID, f
     // IR
     else if (parameterID == "IR#bypassed")
     {
-        DBG(newValue);
         ir.setBypass(static_cast<bool>(newValue));
     }
     else if (parameterID == "IR#mix")

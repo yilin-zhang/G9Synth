@@ -12,7 +12,9 @@
 
 StateVariableFilter::StateVariableFilter():isInitialized(false),
 processSpec({0.0, 0, 0}), pSVF(nullptr)
-{}
+{
+    svfSpec.isBypassed = false;
+}
 
 StateVariableFilter::~StateVariableFilter()
 {
@@ -46,6 +48,7 @@ void StateVariableFilter::reset()
     pSVF = nullptr;
 
     processSpec = {0.0, 0, 0};
+    svfSpec.isBypassed = false;
 
     isInitialized = false;
 }
@@ -127,27 +130,28 @@ float StateVariableFilter::getResonance() const
     return pSVF->getResonance();
 }
 
+void StateVariableFilter::setBypass(bool isBypassed)
+{
+    svfSpec.isBypassed = isBypassed;
+}
+
+bool StateVariableFilter::getBypass() const
+{
+    return svfSpec.isBypassed;
+}
+
 void StateVariableFilter::process(juce::AudioBuffer<float>& buffer)
 {
     if (!isInitialized)
         return;
 
-//    auto numSamples = buffer.getNumSamples();
-//    auto ppBuffer = buffer.getArrayOfWritePointers();
-//    auto numChannels = processSpec.numChannels < buffer.getNumChannels() ? processSpec.numChannels :
-//                                                                           buffer.getNumChannels();
+    if (svfSpec.isBypassed)
+        return;
 
     juce::dsp::AudioBlock<float> block (buffer);
     juce::dsp::ProcessContextReplacing<float> context (block);
 
     pSVF->process(context);
-//    for (int c=0; c<numChannels; ++c)
-//    {
-//        for (int i=0; i<numSamples; ++i)
-//        {
-//            pSVF->processSample(c, ppBuffer[c][i]);
-//        }
-//    }
 }
 
 

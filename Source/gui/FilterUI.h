@@ -40,5 +40,9 @@ private:
     juce::Label resLabel;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> resAttachment;
 
+    juce::ToggleButton bypassed;
+    juce::Label bypassedLabel;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> bypassedAttachment;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FilterUI)
 };
