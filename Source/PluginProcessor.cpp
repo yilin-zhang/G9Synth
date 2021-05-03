@@ -41,7 +41,7 @@ G9SynthAudioProcessor::G9SynthAudioProcessor()
                        std::make_unique<juce::AudioParameterFloat>("Vibrato#depth", "Vibrato#Depth", juce::NormalisableRange<float>(0.f, 200.f, 0.f), 100.f),
                        std::make_unique<juce::AudioParameterFloat>("Vibrato#freq", "Vibrato#Freq", juce::NormalisableRange<float>(0.f, 10.f, 0.f, 0.25f), 5.f),
                        std::make_unique<juce::AudioParameterFloat>("Vibrato#mix", "Vibrato#Mix", juce::NormalisableRange<float>(0.f, 1.f, 0.f), 0.0f),
-                       std::make_unique<juce::AudioParameterFloat>("Delay#time", "Delay#Time", juce::NormalisableRange<float>(0.f, 10.f, 0.f), 0.5f),
+                       std::make_unique<juce::AudioParameterFloat>("Delay#time", "Delay#Time", juce::NormalisableRange<float>(0.f, 10.f, 0.f, 0.25f), 0.5f),
                        std::make_unique<juce::AudioParameterFloat>("Delay#feedback", "Delay#Feedback", juce::NormalisableRange<float>(0.f, 1.f, 0.f), 0.5f),
                        std::make_unique<juce::AudioParameterFloat>("Delay#mix", "Delay#Mix", juce::NormalisableRange<float>(0.f, 1.f, 0.f), 0.0f),
                        // TODO: The IR wav path is not stored
@@ -190,7 +190,7 @@ void G9SynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
             });
 
     vibrato.initialize(processSpec, 0.2);
-    vibrato.setDepth(parameters.getParameterAsValue("Vibrato#depth").getValue());
+    vibrato.setDepth(static_cast<float>(parameters.getParameterAsValue("Vibrato#depth").getValue()) / 1000.f);
     vibrato.setFrequency(parameters.getParameterAsValue("Vibrato#freq").getValue());
     vibrato.setMix(parameters.getParameterAsValue("Vibrato#mix").getValue());
 
