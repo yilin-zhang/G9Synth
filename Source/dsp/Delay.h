@@ -10,13 +10,13 @@
 
 #pragma once
 
-#include<JuceHeader.h>
+#include "SynthModule.h"
 
-class Delay
+class Delay : public SynthModule
 {
 public:
     Delay();
-    ~Delay();
+    ~Delay() override;
 
     /**
      * Initializes the Delay object
@@ -25,22 +25,9 @@ public:
      * @return
      */
     bool initialize(const juce::dsp::ProcessSpec& spec, float maximumDelayInS);
-
-    /**
-     * Clears the samples in the delay line
-     */
-    void clear();
-
-    /**
-     * Releases the memory and sets the object uninitialized
-     */
-    void reset();
-
-    /**
-     * Processes an audio buffer
-     * @param buffer
-     */
-    void process(juce::AudioBuffer<float> &buffer);
+    void clear() override;
+    void reset() override;
+    void process(juce::AudioBuffer<float> &buffer) override;
 
     /**
      * Sets the FX mix
@@ -61,8 +48,6 @@ public:
     void setDelayTime(float delayInS);
 
 private:
-    bool isInitialized;
-    juce::dsp::ProcessSpec processSpec;
     struct DelaySpec
     {
         std::atomic<float> mix; std::atomic<float> feedback; std::atomic<float> delayInS;

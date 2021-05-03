@@ -10,15 +10,15 @@
 
 #pragma once
 
-#include<JuceHeader.h>
+#include "SynthModule.h"
 #include "Oscillator.h"
 #include "RingBuffer.h"
 
-class Vibrato
+class Vibrato : public SynthModule
 {
 public:
     Vibrato();
-    ~Vibrato();
+    ~Vibrato() override;
 
     /**
      * Initialises the processor.
@@ -29,17 +29,17 @@ public:
      * Processes the audio buffer
      * @param buffer
      */
-    void process(juce::AudioBuffer<float> &buffer);
+    void process(juce::AudioBuffer<float> &buffer) override;
 
     /**
      * Releases the memory and sets the object uninitialized
      */
-    void reset();
+    void reset() override;
 
     /**
      * Clears the delay line and resets the internal state variables of the processor.
      */
-    void clear();
+    void clear() override;
 
     /**
      * Sets the vibrato depth in samples
@@ -78,8 +78,6 @@ public:
     float getMix();
 
 private:
-    bool isInitialized;
-    juce::dsp::ProcessSpec processSpec;
     struct VibratoSpec
     {
         std::atomic<float> depthInSamples; std::atomic<float> freqInHz; std::atomic<float> mix;

@@ -10,8 +10,7 @@
 
 #include "RingMod.h"
 
-RingMod::RingMod():
-isInitialized(false), processSpec({0, 0, 0})
+RingMod::RingMod() : SynthModule()
 {
     ringmodSpec.freqInHz = 0.f;
 }
@@ -23,22 +22,19 @@ RingMod::~RingMod()
 
 bool RingMod::initialize(const juce::dsp::ProcessSpec &spec)
 {
-    reset();
+    if (!SynthModule::initialize(spec))
+        return false;
 
     // initialize the LFO
     sinWaveTable.initialize(4096); // the wave-table only initializes itself once
     lfo.initialize(&sinWaveTable, ringmodSpec.freqInHz, spec.sampleRate);
     lfo.setGain(1.f);
-    isInitialized = true;
 
     return true;
 }
 
 void RingMod::process(juce::AudioBuffer<float> &buffer)
 {
-    if (!isInitialized)
-        return;
-
     auto ppBuffer = buffer.getArrayOfWritePointers();
     auto bufferSize = buffer.getNumSamples();
     auto numChannels = buffer.getNumChannels();

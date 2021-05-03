@@ -10,36 +10,20 @@
 
 #pragma once
 
-#include<JuceHeader.h>
+#include "SynthModule.h"
 #include "Oscillator.h"
 #include "RingBuffer.h"
 
-class RingMod
+class RingMod : public SynthModule
 {
 public:
     RingMod();
-    ~RingMod();
+    ~RingMod() override;
 
-    /**
-     * Initialises the processor.
-     */
-    bool initialize(const juce::dsp::ProcessSpec& spec);
-
-    /**
-     * Processes the audio buffer
-     * @param buffer
-     */
-    void process(juce::AudioBuffer<float> &buffer);
-
-    /**
-     * Releases the memory and sets the object uninitialized
-     */
-    void reset();
-
-    /**
-     * Clears the delay line and resets the internal state variables of the processor.
-     */
-    void clear();
+    bool initialize(const juce::dsp::ProcessSpec& spec) override;
+    void process(juce::AudioBuffer<float> &buffer) override;
+    void reset() override;
+    void clear() override;
 
     /**
      * Sets the vibrato frequency in Hz
@@ -66,8 +50,6 @@ public:
     float getMix();
 
 private:
-    bool isInitialized;
-    juce::dsp::ProcessSpec processSpec;
     struct RingModSpec
     {
         std::atomic<float> freqInHz; std::atomic<float> mix;

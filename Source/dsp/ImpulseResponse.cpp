@@ -10,7 +10,7 @@
 
 #include "ImpulseResponse.h"
 
-ImpulseResponse::ImpulseResponse() : isInitialized(false), processSpec({0, 0, 0})
+ImpulseResponse::ImpulseResponse() : SynthModule()
 {
     impulseResponseSpec.isBypassed = true; impulseResponseSpec.mix = 0.f;
 }
@@ -22,18 +22,14 @@ ImpulseResponse::~ImpulseResponse()
 
 bool ImpulseResponse::initialize(const juce::dsp::ProcessSpec &spec)
 {
+    if (!SynthModule::initialize(spec))
+        return false;
+
     impulseResponseSpec.isBypassed = true;
-    processSpec = spec;
     convolution.prepare(spec);
     dryBuffer.setSize(spec.numChannels, spec.maximumBlockSize);
-    isInitialized = true;
 
     return true;
-}
-
-bool ImpulseResponse::getInitialized() const
-{
-    return isInitialized;
 }
 
 bool ImpulseResponse::loadImpulseResponse(const juce::String &pathToWav)
@@ -82,7 +78,7 @@ void ImpulseResponse::clear()
 
 void ImpulseResponse::process(juce::AudioBuffer<float> &buffer)
 {
-    if (impulseResponseSpec.isBypassed || !isInitialized)
+    if (impulseResponseSpec.isBypassed)
         return;
 
     auto numChannels = buffer.getNumChannels();

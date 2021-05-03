@@ -10,8 +10,7 @@
 
 #include "Filter.h"
 
-StateVariableFilter::StateVariableFilter():isInitialized(false),
-processSpec({0.0, 0, 0}), pSVF(nullptr)
+StateVariableFilter::StateVariableFilter(): SynthModule(), pSVF(nullptr)
 {
     svfSpec.isBypassed = false;
 }
@@ -23,15 +22,11 @@ StateVariableFilter::~StateVariableFilter()
 
 bool StateVariableFilter::initialize(const juce::dsp::ProcessSpec &spec)
 {
-    reset();
+    if (!SynthModule::initialize(spec))
+        return false;
 
-    processSpec = spec;
-
-    // 1. allocate memory
     pSVF = new juce::dsp::StateVariableTPTFilter<float>;
     pSVF->prepare(spec);
-
-    isInitialized = true;
 
     return true;
 }
@@ -142,9 +137,6 @@ bool StateVariableFilter::getBypass() const
 
 void StateVariableFilter::process(juce::AudioBuffer<float>& buffer)
 {
-    if (!isInitialized)
-        return;
-
     if (svfSpec.isBypassed)
         return;
 

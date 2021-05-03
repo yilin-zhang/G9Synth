@@ -11,9 +11,7 @@
 #include "Delay.h"
 
 
-Delay::Delay():
-isInitialized(false), processSpec({0, 0, 0}),
-maximumDelayInS(0.f), pDelayLine(nullptr)
+Delay::Delay(): SynthModule(), maximumDelayInS(0.f), pDelayLine(nullptr)
 {
     delaySpec.mix = 0.f; delaySpec.delayInS = 0.f; delaySpec.feedback = 0.f;
 }
@@ -25,26 +23,25 @@ Delay::~Delay()
 
 bool Delay::initialize(const juce::dsp::ProcessSpec& spec, float maximumDelayInS)
 {
-    if (spec.numChannels <= 0 || maximumDelayInS <= 0.f)
+    if (maximumDelayInS <= 0.f)
         return false;
 
-    reset();
+    if (!SynthModule::initialize(spec))
+        return false;
 
-    // allocate memory
     int maximumDelayInSamples = ceil(spec.sampleRate * maximumDelayInS);
-
     pDelayLine = new juce::dsp::DelayLine<float>(maximumDelayInSamples);
     pDelayLine->prepare(spec);
 
-    processSpec = spec;
     this->maximumDelayInS = maximumDelayInS;
-    isInitialized = true;
 
     return true;
 }
 
 void Delay::clear()
 {
+    if (!isInitialized)
+        return;
     // clear the delay lines
     pDelayLine->reset();
 }

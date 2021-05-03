@@ -10,8 +10,7 @@
 
 #include "Bitcrusher.h"
 
-Bitcrusher::Bitcrusher() :
-isInitialized(false), processSpec({0, 0, 0}),
+Bitcrusher::Bitcrusher() : SynthModule(),
 ppDownSampleInterp(nullptr), ppHoldInterp(nullptr)
 {
     bitcrusherSpec.freqInHz = 0.f; bitcrusherSpec.bitDepth = 0.f; bitcrusherSpec.mix = 0.f;
@@ -24,7 +23,9 @@ Bitcrusher::~Bitcrusher()
 
 bool Bitcrusher::initialize(const juce::dsp::ProcessSpec &spec)
 {
-    processSpec = spec;
+    if (!SynthModule::initialize(spec))
+        return false;
+
     dryBuffer.setSize(processSpec.numChannels, processSpec.maximumBlockSize);
     interpBuffer.setSize(processSpec.numChannels, processSpec.maximumBlockSize);
 
@@ -36,7 +37,6 @@ bool Bitcrusher::initialize(const juce::dsp::ProcessSpec &spec)
     for (int c = 0; c < processSpec.numChannels; ++c)
         ppHoldInterp[c] = new juce::ZeroOrderHoldInterpolator;
 
-    isInitialized = true;
     return true;
 }
 
@@ -44,8 +44,6 @@ void Bitcrusher::reset()
 {
     if (!isInitialized)
         return;
-
-    clear();
 
     for (int c = 0; c < processSpec.numChannels; ++c)
     {

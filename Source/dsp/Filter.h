@@ -9,9 +9,9 @@
 */
 
 #pragma once
-#include <JuceHeader.h>
+#include "SynthModule.h"
 
-class StateVariableFilter
+class StateVariableFilter : public SynthModule
 {
 public:
     enum class Type
@@ -22,11 +22,12 @@ public:
     };
 
     StateVariableFilter();
-    ~StateVariableFilter();
+    ~StateVariableFilter() override;
 
-    bool initialize(const juce::dsp::ProcessSpec& spec);
-    void reset();
-    void clear();
+    bool initialize(const juce::dsp::ProcessSpec& spec) override;
+    void reset() override;
+    void clear() override;
+    void process(juce::AudioBuffer<float>& buffer) override;
 
     void setType(Type);
     Type getType() const;
@@ -40,11 +41,7 @@ public:
     void setBypass(bool isBypassed);
     bool getBypass() const;
 
-    void process(juce::AudioBuffer<float>& buffer);
-
 private:
-    bool isInitialized;
-    juce::dsp::ProcessSpec processSpec;
     struct StateVariableFilterSpec
     {
         std::atomic<bool> isBypassed;

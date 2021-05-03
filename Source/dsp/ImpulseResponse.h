@@ -9,43 +9,21 @@
 */
 
 #pragma once
-#include <JuceHeader.h>
+#include "SynthModule.h"
 
-class ImpulseResponse
+class ImpulseResponse : public SynthModule
 {
 public:
     ImpulseResponse();
-    ~ImpulseResponse();
+    ~ImpulseResponse() override;
 
-    /**
-     * Initializes the ImpulseResponse object
-     * @param spec
-     * @return
-     */
-    bool initialize(const juce::dsp::ProcessSpec &spec);
-
-    bool getInitialized() const;
+    bool initialize(const juce::dsp::ProcessSpec &spec) override;
+    void clear() override;
+    void reset() override;
+    void process(juce::AudioBuffer<float> &buffer) override;
 
     bool loadImpulseResponse(const juce::String& pathToWav);
-
-    /**
-     * Clears the samples in the delay line
-     */
-    void clear();
-
-    /**
-     * Releases the memory and sets the object uninitialized
-     */
-    void reset();
-
-    /**
-     * Processes an audio buffer
-     * @param buffer
-     */
-    void process(juce::AudioBuffer<float> &buffer);
-
     void setBypass(bool isBypassed);
-
     bool getBypassed() const;
 
     /**
@@ -57,8 +35,6 @@ public:
     float getMix() const;
 
 private:
-    bool isInitialized;
-    juce::dsp::ProcessSpec processSpec;
     struct ImpulseResponseSpec
     {
         std::atomic<bool> isBypassed; std::atomic<float> mix;

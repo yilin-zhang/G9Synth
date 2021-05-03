@@ -9,34 +9,18 @@
 */
 
 #pragma once
-#include <JuceHeader.h>
+#include "SynthModule.h"
 
-class Bitcrusher
+class Bitcrusher : public SynthModule
 {
 public:
     Bitcrusher();
-    ~Bitcrusher();
+    ~Bitcrusher() override;
 
-    /**
-     * Initialises the processor.
-     */
-    bool initialize(const juce::dsp::ProcessSpec& spec);
-
-    /**
-     * Releases the memory and sets the object uninitialized
-     */
-    void reset();
-
-    /**
-     * Clears the delay line and resets the internal state variables of the processor.
-     */
-    void clear();
-
-    /**
-     * Processes the audio buffer
-     * @param buffer
-     */
-    void process(juce::AudioBuffer<float> &buffer);
+    bool initialize(const juce::dsp::ProcessSpec& spec) override;
+    void reset() override;
+    void clear() override;
+    void process(juce::AudioBuffer<float> &buffer) override;
 
     void setClockFrequency(float freqInHz);
     float getClockFrequency() const;
@@ -48,8 +32,6 @@ public:
     float getMix() const;
 
 private:
-    bool isInitialized;
-    juce::dsp::ProcessSpec processSpec;
     struct BitcrusherSpec
     {
         std::atomic<float> freqInHz; std::atomic<float> bitDepth; std::atomic<float> mix;

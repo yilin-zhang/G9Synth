@@ -10,9 +10,7 @@
 
 #include "Vibrato.h"
 
-Vibrato::Vibrato():
-isInitialized(false), processSpec({0, 0, 0}),
-maximumDepthInS(0.f), ppRingBuffer(nullptr)
+Vibrato::Vibrato(): SynthModule(), maximumDepthInS(0.f), ppRingBuffer(nullptr)
 {
     vibratoSpec.freqInHz = 0.f; vibratoSpec.mix = 0.f; vibratoSpec.depthInSamples = 0.f;
 }
@@ -27,7 +25,8 @@ bool Vibrato::initialize(const juce::dsp::ProcessSpec &spec, float maximumDepthI
     if (maximumDepthInS <= 0)
         return false;
 
-    reset();
+    if (!SynthModule::initialize(spec))
+        return false;
 
     // initialize the LFO
     sinWaveTable.initialize(4096); // the wave-table only initializes itself once
@@ -43,19 +42,13 @@ bool Vibrato::initialize(const juce::dsp::ProcessSpec &spec, float maximumDepthI
         ppRingBuffer[c]->setWriteIdx(static_cast<int>(round(maximumDepthInS*spec.sampleRate+1)));
     }
 
-    processSpec = spec;
-
     // set the member variables
     this->maximumDepthInS = maximumDepthInS;
-    isInitialized = true;
     return true;
 }
 
 void Vibrato::process(juce::AudioBuffer<float> &buffer)
 {
-    if (!isInitialized)
-        return;
-
     auto bufferSize = buffer.getNumSamples();
     // Assume the number of channels in the buffer is the same as the `numChannels`
     auto ppBuffer = buffer.getArrayOfWritePointers();
