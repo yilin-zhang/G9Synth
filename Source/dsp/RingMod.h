@@ -26,13 +26,13 @@ public:
     void clear() override;
 
     /**
-     * Sets the vibrato frequency in Hz
+     * Sets the modulation frequency in Hz
      * @param freqInHz
      */
     void setFrequency(float freqInHz);
 
     /**
-     * Returns the vibrato frequncy in Hz
+     * Returns the modulation frequncy in Hz
      * @return
      */
     float getFrequency();

@@ -19,9 +19,8 @@ public:
     virtual ~SynthModule() = default;
 
     /**
-     * Initialises the processor.
+     * Returns true if the object is initialized.
      */
-
     bool getInitialized() const
     {
         return isInitialized;
@@ -34,12 +33,14 @@ public:
     virtual void process(juce::AudioBuffer<float> &buffer) = 0;
 
     /**
-     * Releases the memory and sets the object uninitialized. Only resets when the object is initialized.
+     * Releases the memory and sets the object uninitialized.
+     * Only resets when the object is initialized.
      */
     virtual void reset() = 0;
 
     /**
      * Clears the delay line and resets the internal state variables of the processor.
+     * Only clears when the object is initialized.
      */
     virtual void clear() = 0;
 

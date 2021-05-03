@@ -22,8 +22,23 @@ public:
     void reset() override;
     void process(juce::AudioBuffer<float> &buffer) override;
 
+    /**
+     * Loads the impulse response
+     * @param pathToWav
+     * @return
+     */
     bool loadImpulseResponse(const juce::String& pathToWav);
+
+    /**
+     * Sets the bypass state
+     * @param isBypassed
+     */
     void setBypass(bool isBypassed);
+
+    /**
+     * Returns the bypass state
+     * @return
+     */
     bool getBypassed() const;
 
     /**
@@ -32,6 +47,10 @@ public:
      */
     void setMix(float value);
 
+    /**
+     * Returns the FX mix
+     * @param value
+     */
     float getMix() const;
 
 private:

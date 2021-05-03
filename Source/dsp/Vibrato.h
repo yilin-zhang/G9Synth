@@ -21,24 +21,14 @@ public:
     ~Vibrato() override;
 
     /**
-     * Initialises the processor.
+     * Initialises the Vibrato object.
+     * @param spec
+     * @param maximumDepthInS
+     * @return
      */
     bool initialize(const juce::dsp::ProcessSpec& spec, float maximumDepthInS);
-
-    /**
-     * Processes the audio buffer
-     * @param buffer
-     */
     void process(juce::AudioBuffer<float> &buffer) override;
-
-    /**
-     * Releases the memory and sets the object uninitialized
-     */
     void reset() override;
-
-    /**
-     * Clears the delay line and resets the internal state variables of the processor.
-     */
     void clear() override;
 
     /**

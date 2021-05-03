@@ -22,13 +22,41 @@ public:
     void clear() override;
     void process(juce::AudioBuffer<float> &buffer) override;
 
+    /**
+     * Sets the clock frequency for sampling
+     * @param freqInHz
+     */
     void setClockFrequency(float freqInHz);
+
+    /**
+     * Returns the clock frequency
+     * @return
+     */
     float getClockFrequency() const;
 
+    /**
+     * Sets the bit depth
+     * It is not really a bit depth, but the number of steps on on side excluding 0
+     * @param depth
+     */
     void setBitDepth(float depth);
+
+    /**
+     * Returns the bit depth
+     * @return
+     */
     float getBitDepth() const;
 
+    /**
+     * Sets the FX mix
+     * @param value
+     */
     void setMix(float value);
+
+    /**
+     * Returns the FX mix
+     * @param value
+     */
     float getMix() const;
 
 private:

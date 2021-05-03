@@ -29,16 +29,51 @@ public:
     void clear() override;
     void process(juce::AudioBuffer<float>& buffer) override;
 
+    /**
+     * Sets the filter type
+     */
     void setType(Type);
+
+    /**
+     * Returns the filter type
+     * @return
+     */
     Type getType() const;
 
+    /**
+     * Sets the cutoff frequency
+     * @param freqInHz
+     */
     void setCutoffFrequency(float freqInHz);
+
+    /**
+     * Returns the cutoff frequency
+     * @return
+     */
     float getCutFrequency() const;
 
+    /**
+     * Sets the resonance
+     * @param res
+     */
     void setResonance(float res);
+
+    /**
+     * Returns the resonance
+     * @return
+     */
     float getResonance() const;
 
+    /**
+     * Sets the bypass state
+     * @param isBypassed
+     */
     void setBypass(bool isBypassed);
+
+    /**
+     * Returns the bypass state
+     * @return
+     */
     bool getBypass() const;
 
 private:

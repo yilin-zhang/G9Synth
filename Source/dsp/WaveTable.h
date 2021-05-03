@@ -18,11 +18,39 @@ class WaveTable
 public:
     WaveTable();
     virtual ~WaveTable() = default;
+
+    /**
+     * Initializes the wave-table
+     * @param tableSize the wave-table size
+     */
     virtual void initialize(int tableSize);
+
+    /**
+     * Returns the sample according to the phase
+     * @param phase
+     * @return
+     */
     float getSample(float phase) const;
+
+    /**
+     * Returns the sample according to the phase
+     * @param phase
+     * @return
+     */
     float getSample(const juce::dsp::Phase<float>& phase) const;
+
+    /**
+     * Returns the table pointer
+     * @return
+     */
     const float* getTablePointer() const;
+
+    /**
+     * Returns the table size
+     * @return
+     */
     int getSize() const;
+
 protected:
     bool isInitialized;
     juce::AudioBuffer<float> table;
