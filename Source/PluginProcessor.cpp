@@ -39,8 +39,8 @@ G9SynthAudioProcessor::G9SynthAudioProcessor()
                        std::make_unique<juce::AudioParameterFloat>("ADSR#decay", "ADSR#Decay", juce::NormalisableRange<float>(0.f, 10.f, 0.f, 0.25f), 0.1f),
                        std::make_unique<juce::AudioParameterFloat>("ADSR#sustain", "ADSR#Sustain", juce::NormalisableRange<float>(0.f, 1.f, 0.f), 1.0f),
                        std::make_unique<juce::AudioParameterFloat>("ADSR#release", "ADSR#Release", juce::NormalisableRange<float>(0.f, 10.f, 0.f, 0.25f), 0.1f),
-                       std::make_unique<juce::AudioParameterFloat>("Vibrato#depth", "Vibrato#Depth", juce::NormalisableRange<float>(0.f, 200.f, 0.f), 100.f),
-                       std::make_unique<juce::AudioParameterFloat>("Vibrato#freq", "Vibrato#Freq", juce::NormalisableRange<float>(0.f, 10.f, 0.f, 0.25f), 5.f),
+                       std::make_unique<juce::AudioParameterFloat>("Vibrato#depth", "Vibrato#Depth", juce::NormalisableRange<float>(0.f, 2.f, 0.f), 1.f),
+                       std::make_unique<juce::AudioParameterFloat>("Vibrato#freq", "Vibrato#Freq", juce::NormalisableRange<float>(0.f, 100.f, 0.f, 0.25f), 5.f),
                        std::make_unique<juce::AudioParameterFloat>("Vibrato#mix", "Vibrato#Mix", juce::NormalisableRange<float>(0.f, 1.f, 0.f), 0.0f),
                        std::make_unique<juce::AudioParameterFloat>("Delay#time", "Delay#Time", juce::NormalisableRange<float>(0.f, 10.f, 0.f, 0.25f), 0.5f),
                        std::make_unique<juce::AudioParameterFloat>("Delay#feedback", "Delay#Feedback", juce::NormalisableRange<float>(0.f, 1.f, 0.f), 0.5f),
@@ -194,7 +194,7 @@ void G9SynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
                     parameters.getParameterAsValue("ADSR#release").getValue(),
             });
 
-    vibrato.initialize(processSpec, 0.2);
+    vibrato.initialize(processSpec, 0.004);
     vibrato.setDepth(static_cast<float>(parameters.getParameterAsValue("Vibrato#depth").getValue()) / 1000.f);
     vibrato.setFrequency(parameters.getParameterAsValue("Vibrato#freq").getValue());
     vibrato.setMix(parameters.getParameterAsValue("Vibrato#mix").getValue());
