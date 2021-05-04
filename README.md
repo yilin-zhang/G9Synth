@@ -1,5 +1,5 @@
 # Group9 Synth
-Final project for MUSI-6202 2021 Spring
+Final project for MUSI-6202/4459 2021 Spring
 
 ## What is it?
 This project is a monophonic subtractive synthesizer plug-in that deploys four wavetable synthesized oscillators, state variable filter design, and various modulated effects.
@@ -10,11 +10,6 @@ The plug-in takes in parameters as a VST. You can adjust all of the knobs to ach
 There are 4 gain controls for the 4 oscillators, and 3 pitch shift controls for sin wave, sawtooth wave, and square wave. For SVF, there is a filter type menu, and 3 knobs for filter cutoff, resonance, and mix. For delay effect, there are 3 knobs for time, feedback and mix. For vibrato effect, there are be 3 knobs for depth, frequency and mix. Similar parameter layout will be applied to the ring modulator. A .wav file input will be required for the impulse response. System gain is also configurable.
 
 ## How to run it
-Download your desired format of our most recent release to the custom plug-in folder of your DAW, and start playing!
+Download your desired format of our most recent release at https://github.com/yilin-zhang/G9Synth/releases to the custom plug-in folder of your DAW, and start playing!
 
 ![Release](https://user-images.githubusercontent.com/70708796/117074450-548c8580-ad01-11eb-864b-83c94bb48671.png)
-
-
-
-### Troubleshooting
-
