@@ -13,6 +13,7 @@
 
 //==============================================================================
 ImpulseResponseUI::ImpulseResponseUI(G9SynthAudioProcessor& p) : processor(p), parameters(p.getValueTreeState()),
+gain {juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow},
 mix {juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow}
 {
     // In your constructor, you should add any child components, and
@@ -29,6 +30,10 @@ mix {juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow}
     bypassedLabel.attachToComponent(&bypassed, false);
     bypassedAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(parameters, "IR#bypassed", bypassed);
 
+    addAndMakeVisible(gain);
+    gainLabel.setText("Gain", juce::dontSendNotification);
+    gainLabel.attachToComponent(&gain, false);
+    gainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(parameters, "IR#gain", gain);
 
     addAndMakeVisible(mix);
     mixLabel.setText("Mix", juce::dontSendNotification);
@@ -56,12 +61,14 @@ void ImpulseResponseUI::resized()
 {
     juce::Rectangle<int> knobSize (0, 0, 80, 80);
     juce::Rectangle<int> toggleSize (0, 0, 50, 20);
-    juce::Rectangle<int> buttonSize (0, 0, 80, 40);
+    juce::Rectangle<int> buttonSize (0, 0, 80, 25);
+    juce::Rectangle<int> smallKnobSize (0, 0, 70, 70);
 
     bypassed.setBounds(20, 45, toggleSize.getWidth(), toggleSize.getHeight());
-    loadIR.setBounds(25, 55+toggleSize.getHeight(), buttonSize.getWidth(), buttonSize.getHeight());
+    loadIR.setBounds(45, 25+toggleSize.getHeight(), buttonSize.getWidth(), buttonSize.getHeight());
     loadIR.setButtonText("Load IR");
-    mix.setBounds(35, 55+(toggleSize.getHeight()+knobSize.getHeight()), knobSize.getWidth(), knobSize.getHeight());
+    gain.setBounds(65, 8+knobSize.getHeight(), smallKnobSize.getWidth(), smallKnobSize.getHeight());
+    mix.setBounds(25, 55+(toggleSize.getHeight()+knobSize.getHeight()), knobSize.getWidth(), knobSize.getHeight());
 }
 
 void ImpulseResponseUI::loadIRButtonClicked()

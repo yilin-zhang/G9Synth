@@ -42,6 +42,18 @@ public:
     bool getBypassed() const;
 
     /**
+     * Sets the gain
+     * @param value
+     */
+    void setGain(float value);
+
+    /**
+     * Returns the gain
+     * @param value
+     */
+    float getGain() const;
+
+    /**
      * Sets the FX mix
      * @param value
      */
@@ -56,7 +68,7 @@ public:
 private:
     struct ImpulseResponseSpec
     {
-        std::atomic<bool> isBypassed; std::atomic<float> mix;
+        std::atomic<bool> isBypassed; std::atomic<float> gain; std::atomic<float> mix;
     } impulseResponseSpec;
 
     juce::AudioBuffer<float> dryBuffer;

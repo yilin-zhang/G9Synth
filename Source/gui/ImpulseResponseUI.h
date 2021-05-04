@@ -37,6 +37,10 @@ private:
     juce::Label bypassedLabel;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> bypassedAttachment;
 
+    juce::Slider gain;
+    juce::Label gainLabel;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainAttachment;
+
     juce::Slider mix;
     juce::Label mixLabel;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> mixAttachment;

@@ -12,7 +12,7 @@
 
 ImpulseResponse::ImpulseResponse() : SynthModule()
 {
-    impulseResponseSpec.isBypassed = true; impulseResponseSpec.mix = 0.f;
+    impulseResponseSpec.isBypassed = true; impulseResponseSpec.mix = 0.f; impulseResponseSpec.gain = 1.f;
 }
 
 ImpulseResponse::~ImpulseResponse()
@@ -61,7 +61,7 @@ void ImpulseResponse::reset()
     clear();
 
     processSpec = {0.0, 0, 0};
-    impulseResponseSpec.isBypassed = true; impulseResponseSpec.mix = 0.f;
+    impulseResponseSpec.isBypassed = true; impulseResponseSpec.mix = 0.f; impulseResponseSpec.gain = 1.f;
 
     isInitialized = false;
 }
@@ -84,6 +84,7 @@ void ImpulseResponse::process(juce::AudioBuffer<float> &buffer)
     auto numChannels = buffer.getNumChannels();
     auto numSamples = buffer.getNumSamples();
     float mix = impulseResponseSpec.mix;
+    float gain = impulseResponseSpec.gain;
 
     for (int c = 0; c < numChannels; ++c)
         dryBuffer.copyFrom(c, 0, buffer, c, 0, numSamples);
@@ -97,6 +98,8 @@ void ImpulseResponse::process(juce::AudioBuffer<float> &buffer)
 
     for (int c = 0; c < numChannels; ++c)
         buffer.addFrom(c, 0, dryBuffer, c, 0, numSamples);
+
+    buffer.applyGain(gain);
 }
 
 void ImpulseResponse::setBypass(bool isBypassed)
@@ -109,6 +112,20 @@ bool ImpulseResponse::getBypassed() const
     return impulseResponseSpec.isBypassed;
 }
 
+void ImpulseResponse::setGain(float value)
+{
+    if (value > 3.f)
+        value = 3.f;
+    else if (value < 0.f)
+        value = 0.f;
+
+    impulseResponseSpec.gain = value;
+}
+
+float ImpulseResponse::getGain() const
+{
+    return impulseResponseSpec.gain;
+}
 void ImpulseResponse::setMix(float value)
 {
     if (value > 1.f)
