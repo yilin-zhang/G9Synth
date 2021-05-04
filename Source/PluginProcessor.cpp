@@ -52,7 +52,8 @@ G9SynthAudioProcessor::G9SynthAudioProcessor()
                        std::make_unique<juce::AudioParameterFloat>("Bitcrusher#depth", "Bitcrusher#Depth", juce::NormalisableRange<float>(2.f, 8.f, 0.f), 8.f),
                        std::make_unique<juce::AudioParameterFloat>("Bitcrusher#freq", "Bitcrusher#Freq", juce::NormalisableRange<float>(200.f, 480000.f, 0.f, 0.25f), 55600.f),
                        std::make_unique<juce::AudioParameterFloat>("Bitcrusher#mix", "Bitcrusher#Mix", juce::NormalisableRange<float>(0.f, 1.f, 0.f, 0.25f), 0.0f),
-                       std::make_unique<juce::AudioParameterBool>("Bitcrusher#dither", "Bitcrusher#Dither", false)
+                       std::make_unique<juce::AudioParameterBool>("Bitcrusher#dither", "Bitcrusher#Dither", false),
+                       std::make_unique<juce::AudioParameterFloat>("gain", "Gain", juce::NormalisableRange<float>(0.f, 3.f, 0.f), 1.f),
                   })
 {
     parameters.addParameterListener("SinOsc#gain", this);
@@ -84,6 +85,7 @@ G9SynthAudioProcessor::G9SynthAudioProcessor()
     parameters.addParameterListener("IR#bypassed", this);
     parameters.addParameterListener("IR#gain", this);
     parameters.addParameterListener("IR#mix", this);
+    parameters.addParameterListener("gain", this);
 }
 
 G9SynthAudioProcessor::~G9SynthAudioProcessor()
@@ -216,6 +218,8 @@ void G9SynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     bitcrusher.setBitDepth(parameters.getParameterAsValue("Bitcrusher#depth").getValue());
     bitcrusher.setMix(parameters.getParameterAsValue("Bitcrusher#mix").getValue());
     bitcrusher.setDither(parameters.getParameterAsValue("Bitcrusher#dither").getValue());
+
+    gain = parameters.getParameterAsValue("gain").getValue();
 }
 
 void G9SynthAudioProcessor::releaseResources()
@@ -232,6 +236,7 @@ void G9SynthAudioProcessor::releaseResources()
     adsr.reset();
     delay.reset();
     ir.reset();
+    gain = 1.f;
 
     processSpec = {0.0, 0, 0};
 }
@@ -309,6 +314,7 @@ void G9SynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
 
     // split the buffer into smaller ones if it's larger than the expected size
     int startSample = 0;
+    float fGain;
     while (startSample < blockSize - 1)
     {
         int smallerSize = blockSize - startSample <= processSpec.maximumBlockSize ?
@@ -322,6 +328,9 @@ void G9SynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
         delay.process(smallerBuffer);
         ir.process(smallerBuffer);
         bitcrusher.process(smallerBuffer);
+
+        fGain = this->gain;
+        smallerBuffer.applyGain(fGain);
 
         startSample += smallerSize;
     }
@@ -504,6 +513,11 @@ void G9SynthAudioProcessor::parameterChanged (const juce::String &parameterID, f
     else if (parameterID == "IR#mix")
     {
         ir.setMix(newValue);
+    }
+    // Gain
+    else if (parameterID == "gain")
+    {
+        gain = newValue;
     }
 }
 

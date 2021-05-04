@@ -87,6 +87,8 @@ private:
     Delay delay;
     ImpulseResponse ir;
 
+    std::atomic<float> gain;
+
     int currentMIDINote;
 
     //==============================================================================

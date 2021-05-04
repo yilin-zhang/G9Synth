@@ -18,6 +18,7 @@
 #include "gui/DelayUI.h"
 #include "gui/ImpulseResponseUI.h"
 #include "gui/BitcrusherUI.h"
+#include "gui/GainUI.h"
 
 //==============================================================================
 /**
@@ -45,6 +46,7 @@ private:
     DelayUI delayUI;
     ImpulseResponseUI irUI;
     BitcrusherUI bitcrusherUI;
+    GainUI gainUI;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (G9SynthAudioProcessorEditor)
 };
