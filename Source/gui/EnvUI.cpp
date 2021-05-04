@@ -56,7 +56,7 @@ void EnvUI::paint (juce::Graphics& g)
     g.drawText("Env", titleArea, juce::Justification::centredTop);
 
     juce::Rectangle <float> area (0, 25, getWidth(), getHeight()-25);
-    g.setColour(juce::Colours::yellow);
+    g.setColour(juce::Colours::maroon);
     g.drawRoundedRectangle(area, 20.0f, 2.0f);
 }
 
